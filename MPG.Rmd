@@ -16,42 +16,49 @@ ipak <- function(pkg){
 
 ### Package Usage
 packages <- c("plyr", "dplyr", "data.table", "dtplyr", "lubridate", "ggplot2", "scales",
-                  "reshape2", "knitr", "R.cache", "stringr", "gtools", "quantreg")
+                  "reshape2", "knitr", "R.cache", "stringr", "gtools", "quantreg", "graphics")
 ipak(packages)
 ```
 
 ## Overview  
-Using the R dataset ToothGrowth, we are asked to evaluate, using confidence intervals and/or hypothesis testing, tooth growth by supp and dose.  The first step is to determine whether there has been growth, then whether the growth was signifiantly different from others. An important assumption is that growth cannot be negative.  The negative growth would be an indication of other conditions or trauma such that we would remove from the analysis.  
+You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
+
+* Is an automatic or manual transmission better for MPG?
+* Quantify the MPG difference between automatic and manual transmissions"  
+
+A first step in the analysis is to look at the effect of transmission type, automatic vs. manual, on miles per gallon (MPG).  Without much review of the dataset, it may be reasonable to expect that a manual transmission vehicle is associated with higher MPG.  Further review will uncover other items, such as vehicle weight and the number of cylinders (e.g. 4, 6, 8), that may contribute more significantly to the mileage of a vehicle.
 
 
 ## Load Data  
 Given that this is an R dataset we can simply use data(ToothGrowth) to load the dataset into the current enviromnent.  
-```{r load_dataset, include = TRUE, echo = TRUE}
-data(ToothGrowth)
+```{r load_mtcars, include = TRUE, echo = TRUE}
+data(mtcars)
 ```
+
 
 ## Exploratory Data Analysis  
 Let's take a closer look at the datsset to understand the contents of the dataset.  Two key parameters for the analysis are supp and dose.  We want to these are not NULL for an observation.  If we observe such a NULL value, we will need to determine whether we can make a reasonable substitution or the observation is removed from analysis.
 
+
 ### Overall summary view of dataset
-```{r dataset_overview, include = TRUE, echo = TRUE, results = "asis"}
-str(ToothGrowth)
-summary(ToothGrowth)
-table(ToothGrowth$supp, ToothGrowth$dose)
+```{r dataset_overview, include = TRUE, echo = TRUE, results = "hold"}
+str(mtcars)
+head(mtcars)
+summary(mtcars)
+```
+
+```{r auto_manual_transmission, include = FALSE, echo = FALSE, results = "hide"}
+ttlobs <- lenght(mtcars$am)
+mtrans <- sum(mtcars$am)
+atrans <- ttlobs - mtrans
 ```
 
 
-### Unique values for 'supp' and 'dose'
-```{r unique_values, include = TRUE, echo = TRUE, results = "hold"}
-unique(ToothGrowth$supp)
-unique(ToothGrowth$dose)
-```
-
-
-### Boxplot: Length of tooth for different supplements & dosing levels
+### Panel Plot: Relationship of Variables
 With a limited number of variables, the boxplot provides a good vehicle to illustrate the data.  Not only only can we  compare tooth lenght by supplement (supp) and dose, we capture insight to the range of values (length) for each combination of supplement and dose.
-```{r plot1_scatterplot, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
-ggplot(ToothGrowth, aes(x = supp, y = len)) +
+```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+pairs(mtcars, panel = panel.smooth, main = "Swiss data", col = 3 + (swiss$Catholic > 50))
+ggplot(mtcars, aes(x = supp, y = len)) +
       geom_boxplot(aes(fill = supp)) +
       facet_wrap(~dose)
 ```
