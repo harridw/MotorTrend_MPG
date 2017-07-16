@@ -57,10 +57,27 @@ atrans <- ttlobs - mtrans
 ### Panel Plot: Relationship of Variables
 With a limited number of variables, the boxplot provides a good vehicle to illustrate the data.  Not only only can we  compare tooth lenght by supplement (supp) and dose, we capture insight to the range of values (length) for each combination of supplement and dose.
 ```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
-pairs(mtcars, panel = panel.smooth, main = "Swiss data", col = 3 + (swiss$Catholic > 50))
-ggplot(mtcars, aes(x = supp, y = len)) +
-      geom_boxplot(aes(fill = supp)) +
-      facet_wrap(~dose)
+pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
+g1 <- ggplot(mtcars, aes(x = cyl, y = mpg))
+g1 <- g1 + geom_boxplot(aes(fill = cyl))
+g2 <- ggplot(mtcars, aes(x = disp, y = mpg))
+g2 <- g2 + geom_boxplot(aes(fill = disp))
+g3 <- ggplot(mtcars, aes(x = hp, y = mpg))
+g3 <- g3 + geom_boxplot(aes(fill = hp))
+g4 <- ggplot(mtcars, aes(x = drat, y = mpg))
+g4 <- g4 + geom_boxplot(aes(fill = drat))
+g5 <- ggplot(mtcars, aes(x = wt, y = mpg))
+g5 <- g5 + geom_boxplot(aes(fill = wt))
+g6 <- ggplot(mtcars, aes(x = qsec, y = mpg))
+g6 <- g6 + geom_boxplot(aes(fill = qsec))
+g7 <- ggplot(mtcars, aes(x = vs, y = mpg))
+g7 <- g7 + geom_boxplot(aes(fill = vs))
+g8 <- ggplot(mtcars, aes(x = am, y = mpg))
+g8 <- g8 + geom_boxplot(aes(fill = am))
+g9 <- ggplot(mtcars, aes(x = gear, y = mpg))
+g9 <- g9 + geom_boxplot(aes(fill = gear))
+g10 <- ggplot(mtcars, aes(x = carb, y = mpg))
+g10 <- g10 + geom_boxplot(aes(fill = carb))
 ```
 
 
