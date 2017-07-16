@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ## Packages for Course 7 Project: Motor Trend MPG
-```{r setup, include = FALSE, echo = FALSE, results = "hide"}
+```{r setup, include = TRUE, echo = FALSE, results = "hide"}
 ipak <- function(pkg){
       new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
       if (length(new.pkg)) 
@@ -16,7 +16,8 @@ ipak <- function(pkg){
 
 ### Package Usage
 packages <- c("plyr", "dplyr", "data.table", "dtplyr", "lubridate", "ggplot2", "scales",
-                  "reshape2", "knitr", "R.cache", "stringr", "gtools", "quantreg", "graphics")
+                  "reshape2", "knitr", "R.cache", "stringr", "gtools", "quantreg",
+                  "graphics", "corrplot")
 ipak(packages)
 ```
 
@@ -37,51 +38,65 @@ data(mtcars)
 
 
 ## Exploratory Data Analysis  
-Let's take a closer look at the datsset to understand the contents of the dataset.  Two key parameters for the analysis are supp and dose.  We want to these are not NULL for an observation.  If we observe such a NULL value, we will need to determine whether we can make a reasonable substitution or the observation is removed from analysis.
+Our exploratory analysis provides some quick insigtht to the data of 'mtcars' data set.  We provide a chart of the correlation for each variable and two panel plots.  One of the panel plots, representing line graphs of the relationship for each variable, is illustrated in the Appendix.  The other panel plot, illustrated below in Exhibit 2, provides additional information about the relationship of variables to mpg.  The correlation matrix is used to determine which variables are included in the panel plot, based on correlation factor with absolute value > 0.5.
 
 
-### Overall summary view of dataset
+### Summary view of dataset
 ```{r dataset_overview, include = TRUE, echo = TRUE, results = "hold"}
 str(mtcars)
 head(mtcars)
 summary(mtcars)
 ```
 
-```{r auto_manual_transmission, include = FALSE, echo = FALSE, results = "hide"}
-ttlobs <- lenght(mtcars$am)
-mtrans <- sum(mtcars$am)
-atrans <- ttlobs - mtrans
+
+### Correlation Matrix (Upper Triangle)
+This table provides an easy way to look at the relationship between the different variables of the 'mtcars' dataset.  Along the diagonal, we see a value of 1, representing the correlation of a variable(e.g. mpg) and itself.  A correlation factor, or value, is between -1 and 1.  A positive correlation factir indicates that a variable changes directionally with another defined variable.  A negative correlation suggests that two variables move in opposite directions.  The closer the correlation factor is to zero indicates lower correlation.  As correlation moves closer to -1 or 1, the stroger is the correlation or relationship.
+
+#### Exhibit 2: Correlation Factor Matrix
+```{r auto_manual_transmission, include = TRUE, echo = TRUE, results = "asis"}
+corrplot(round(cor(mtcars[,1:11]), 3), method = "number", type = "upper")
 ```
 
 
-### Panel Plot: Relationship of Variables
-With a limited number of variables, the boxplot provides a good vehicle to illustrate the data.  Not only only can we  compare tooth lenght by supplement (supp) and dose, we capture insight to the range of values (length) for each combination of supplement and dose.
-```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
-pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
-g1 <- ggplot(mtcars, aes(x = cyl, y = mpg))
-g1 <- g1 + geom_boxplot(aes(fill = cyl))
-g2 <- ggplot(mtcars, aes(x = disp, y = mpg))
-g2 <- g2 + geom_boxplot(aes(fill = disp))
-g3 <- ggplot(mtcars, aes(x = hp, y = mpg))
-g3 <- g3 + geom_boxplot(aes(fill = hp))
-g4 <- ggplot(mtcars, aes(x = drat, y = mpg))
-g4 <- g4 + geom_boxplot(aes(fill = drat))
-g5 <- ggplot(mtcars, aes(x = wt, y = mpg))
-g5 <- g5 + geom_boxplot(aes(fill = wt))
-g6 <- ggplot(mtcars, aes(x = qsec, y = mpg))
-g6 <- g6 + geom_boxplot(aes(fill = qsec))
-g7 <- ggplot(mtcars, aes(x = vs, y = mpg))
-g7 <- g7 + geom_boxplot(aes(fill = vs))
-g8 <- ggplot(mtcars, aes(x = am, y = mpg))
-g8 <- g8 + geom_boxplot(aes(fill = am))
-g9 <- ggplot(mtcars, aes(x = gear, y = mpg))
-g9 <- g9 + geom_boxplot(aes(fill = gear))
-g10 <- ggplot(mtcars, aes(x = carb, y = mpg))
-g10 <- g10 + geom_boxplot(aes(fill = carb))
+### Relationship of Variables
+Along with the table of correlation factors, this panel plot provides additional insight to the relation of each variable to MPG.  The variables included in the plots have an absolute value of the correlation factor > 0.50 against MPG.  In other words, these variables are more significantly correlated, positively or negatively, with mpg.
+
+#### Exhibit 2: Variable Relationship to Miles per Gallon (MPG)
+```{r panel_plot_high_corr, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+par(mfrow = c(2,4), mar = c(6,4,1,1))
+g1 <- ggplot(mtcars, aes(x = cyl, y = mpg, group = cyl)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "# Cylinders", y = "MPG")
+g1
+g2 <- ggplot(mtcars, aes(x = disp, y = mpg, group = disp)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "disp", y = "MPG")
+g2
+g3 <- ggplot(mtcars, aes(x = hp, y = mpg, group = hp)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "Horespower", y = "MPG")
+g3
+g4 <- ggplot(mtcars, aes(x = drat, y = mpg, group = drat)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "drat", y = "MPG")
+g4
+g5 <- ggplot(mtcars, aes(x = wt, y = mpg, group = wt)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "Weight", y = "MPG")
+g5
+g6 <- ggplot(mtcars, aes(x = vs, y = mpg, group = vs)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "vs", y = "MPG")
+g6
+g7 <- ggplot(mtcars, aes(x = am, y = mpg, group = am)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "Auto/Manual", y = "MPG")
+g7
+g8 <- ggplot(mtcars, aes(x = carb, y = mpg, group = carb)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "Carberator", y = "MPG")
+g8
 ```
-
-
-Looking at information from the exploratory data analysis, there are two key observations: 1) higher doses produce greater tooth growth; and 2) 'OJ' produces tooth growth equal to or better than 'VC' at all observed dose levels, particularly at lower doses. As there are 10 observations for each supp-dose combination, we will use T-statistics to evaluate whether 'OJ' results are significantly better th 'VC' and whether dose levels produce materially different growth.
 
 
 ## Confidence Intervals & Hypothosis Testing
@@ -226,4 +241,12 @@ Each criteria is binary: (1 point = criteria met acceptably; 0 points = criteria
 7. Was the report brief (about 2 pages long) for the main body of the report and no longer than 5 with supporting appendix of figures?
 8. Did the report include an executive summary?
 9. Was the report done in Rmd (knitr)?
+
+
+### Exhibit A-1 (Panel Plot): Illustrate the relationship of the different varaibles
+This panel plot provides a quick, high-level, illustration of a variable within the dataset against each other variable in the dataset.  The pu
+```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
+
+
 
