@@ -52,9 +52,24 @@ summary(mtcars)
 ### Correlation Matrix (Upper Triangle)
 This table provides an easy way to look at the relationship between the different variables of the 'mtcars' dataset.  Along the diagonal, we see a value of 1, representing the correlation of a variable(e.g. mpg) and itself.  A correlation factor, or value, is between -1 and 1.  A positive correlation factir indicates that a variable changes directionally with another defined variable.  A negative correlation suggests that two variables move in opposite directions.  The closer the correlation factor is to zero indicates lower correlation.  As correlation moves closer to -1 or 1, the stroger is the correlation or relationship.
 
-#### Exhibit 2: Correlation Factor Matrix
-```{r auto_manual_transmission, include = TRUE, echo = TRUE, results = "asis"}
-corrplot(round(cor(mtcars[,1:11]), 3), method = "number", type = "upper")
+#### Exhibit 1: Correlation Factor Matrix
+```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "asis"}
+corr.grid <- corrplot(round(cor(mtcars[,1:11]), 3), method = "number", type = "upper")
+corr.grid
+```
+
+```{r mpg_corr_grid, include = FALSE, echo = FALSE, results = "hide"}
+mpg.corr <- round(cor(mtcars[,1:11]), 3)[1,]
+mpg.cyl <- mpg.cor[2]
+mpg.disp <- mpg.cor[3]
+mpg.hp <- mpg.cor[4]
+mpg.drat <- mpg.cor[5]
+mpg.wt <- mpg.cor[6]
+mpg.qsec <- mpg.cor[7]
+mpg.vs <- mpg.cor[8]
+mpg.am <- mpg.cor[9]
+mpg.gear <- mpg.cor[10]
+mpg.carb <- mpg.cor[11]
 ```
 
 
@@ -99,9 +114,20 @@ g8
 ```
 
 
-## Confidence Intervals & Hypothosis Testing
-As previously stated, there are two variables of interest, supplement('VC', 'OJ') and dose(0.5, 1.0, and 2.0).  Our initial testing will be to look at the supplement.  There may be two questions to be answered here.  First, does 'OJ' promote greater tooth growth than 'VC'?  This would be across all dosing levels.  Once we answer this question, we may want to evaluate the supplement within each dosing level.
+## Regression Analysis
+The focus of our analysis is miles per gallon (MPG).  More specifically, we want to understand what variables or terms influence the mpg of a car.  It might be reasonable and/or appropriate to include all variables within the 'mtcars' dataset to predict the mpg of a car.  However, we likely want to explore and understand whether each variable contributes to the estimate.  If we look at the correlation matrix, you can see that the variables 'cyl', 'disp', and 'wt' are similarly correlated with mpg, -0.85, -0.85, and -0.87 respectively.  This strong relationship is further suggested when we look at the correlation factor between these variables: 'cyl'~'disp' = 0.9;  'cyl'~'wt' = 0.78; and 'disp'~'wt' = 0.89.  We'll start with looking at 'mpg' related to the variable 'am', transmission (automatic vs. manual).
 
+
+### Automatic versus Manual Regression
+The initial model looks at the effect of transmission type (automatic vs. manual) on the miles per gallon (MPG) of a car.  It is important to note that the variable 'am' contains a 0 (automatic) or 1 (manual).  So the baseline, or intercept, reflects the average mpg for a car with automatic transmission.  The 'am' coefficient represents the average change in mpg for a car with manual transmission.
+
+#### Exhibit 4: Simple Linear Regression (mpg ~ am)
+```{r slr_mpg_am, include = TRUE, echo = TRUE, results = "asis"}
+fit1 <- lm(mpg ~ am, data = mtcars)
+fit1coef <- round(summary(fit1)$coef, 3)
+fit1rsquare <- round(summary(fit1)$r.squared, 3)
+fit1sigma <- round(summary(fit1)$sigma, 3)
+```
 
 ### T-test: Difference in Tooth Growth by Supplement
 The first step is to split data by supplement('supp').  We will use the t.test() function in R to evaluate whether the tooth length is longer when the supplement 'OJ' is used compared to 'VC' across all dose levels.  The boxplot might indicate that the supplement 'OJ' promotes greater tooth growth than 'VC'.  We will use a one-sided (right) to evaluate
