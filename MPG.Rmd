@@ -215,10 +215,10 @@ pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
 
 
 #### Figure 2: Correlation Factor Matrix
-```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "asis"}
-corr.grid <- corrplot(round(cor(mtcars[,1:11]), 3), method = "number", type = "upper",
-                      add = FALSE, order = "original", is.corr = TRUE)
-corr.grid
+```{r corr_matrix_grid, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+mtcars.corr <- round(cor(mtcars), 3)
+corrplot(mtcars.corr, method = "number", type = "upper", add = FALSE, 
+                  order = "original", is.corr = TRUE)
 ```
 
 
