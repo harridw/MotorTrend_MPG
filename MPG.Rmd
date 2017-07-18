@@ -17,7 +17,7 @@ ipak <- function(pkg){
 ### Package Usage
 packages <- c("plyr", "dplyr", "data.table", "dtplyr", "lubridate", "ggplot2", "scales",
                   "reshape2", "knitr", "R.cache", "stringr", "gtools", "quantreg",
-                  "graphics", "corrplot")
+                  "graphics", "corrplot", "broom")
 ipak(packages)
 ```
 
@@ -74,44 +74,7 @@ mpg.carb <- mpg.cor[11]
 
 
 ### Relationship of Variables
-Along with the table of correlation factors, this panel plot provides additional insight to the relation of each variable to MPG.  The variables included in the plots have an absolute value of the correlation factor > 0.50 against MPG.  In other words, these variables are more significantly correlated, positively or negatively, with mpg.
-
-#### Exhibit 2: Variable Relationship to Miles per Gallon (MPG)
-```{r panel_plot_high_corr, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
-par(mfrow = c(2,4), mar = c(6,4,1,1))
-g1 <- ggplot(mtcars, aes(x = cyl, y = mpg, group = cyl)) +
-            geom_boxplot(width = 0.5) +
-            labs(x = "# Cylinders", y = "MPG")
-g1
-g2 <- ggplot(mtcars, aes(x = disp, y = mpg, group = disp)) +
-            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
-            labs(x = "disp", y = "MPG")
-g2
-g3 <- ggplot(mtcars, aes(x = hp, y = mpg, group = hp)) +
-            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
-            labs(x = "Horespower", y = "MPG")
-g3
-g4 <- ggplot(mtcars, aes(x = drat, y = mpg, group = drat)) +
-            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
-            labs(x = "drat", y = "MPG")
-g4
-g5 <- ggplot(mtcars, aes(x = wt, y = mpg, group = wt)) +
-            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
-            labs(x = "Weight", y = "MPG")
-g5
-g6 <- ggplot(mtcars, aes(x = vs, y = mpg, group = vs)) +
-            geom_boxplot(width = 0.5) +
-            labs(x = "vs", y = "MPG")
-g6
-g7 <- ggplot(mtcars, aes(x = am, y = mpg, group = am)) +
-            geom_boxplot(width = 0.5) +
-            labs(x = "Auto/Manual", y = "MPG")
-g7
-g8 <- ggplot(mtcars, aes(x = carb, y = mpg, group = carb)) +
-            geom_boxplot(width = 0.5) +
-            labs(x = "Carberator", y = "MPG")
-g8
-```
+Along with the table of correlation factors, the panel plots (see Appendix Figure 1 and Figure 2) provides additional insight to the relation of each variable to MPG as well as each other. These plots, along with the correlation matrix, are considered for purpose of the further analysis, including regression analysis.
 
 
 ## Regression Analysis
@@ -121,13 +84,69 @@ The focus of our analysis is miles per gallon (MPG).  More specifically, we want
 ### Automatic versus Manual Regression
 The initial model looks at the effect of transmission type (automatic vs. manual) on the miles per gallon (MPG) of a car.  It is important to note that the variable 'am' contains a 0 (automatic) or 1 (manual).  So the baseline, or intercept, reflects the average mpg for a car with automatic transmission.  The 'am' coefficient represents the average change in mpg for a car with manual transmission.
 
+
 #### Exhibit 4: Simple Linear Regression (mpg ~ am)
+This simple linear regression produces an intercept of 17.147 mpg.  If the car has a manual transmission, we would estimate an additional 7.25 mpg.  As previously stated, it is idealistic to assume that the type of transmission, automatic vs. manual, could define the mpg of a car.  This is further validated by a relatively low adjusted r.square of 0.3385, meaning that roughly 34% of the change in mpg is explained by transmission type alone.
+
 ```{r slr_mpg_am, include = TRUE, echo = TRUE, results = "asis"}
 fit1 <- lm(mpg ~ am, data = mtcars)
-fit1coef <- round(summary(fit1)$coef, 3)
-fit1rsquare <- round(summary(fit1)$r.squared, 3)
-fit1sigma <- round(summary(fit1)$sigma, 3)
+fit1coef <- round(summary(fit1)$coef, 4)
+fit1glance <- round(glance(fit1)[1:6], 4)
+fit1coef
+fit1glance
 ```
+
+
+### Automatic versus Manual (Multivariable Regression)
+To build a multivariable regression that best fits the data, we could add one variable, or term, at a time.  The goal is to avoid underfitting or overfitting the model.  Therefore, we want to include variables that minimizes the residual, maximizes adjusted r.square, and statistically significant (anova results). We will review our exploratory analysis to add variables, no more than 2 variables at a time.
+
+
+#### Exhibit 5: Multivariable Regression (mpg ~ am + wt)
+```{r slr_mpg_am_one, include = TRUE, echo = TRUE, results = "asis"}
+fit2 <- lm(mpg ~ am + wt, data = mtcars)
+fit2coef <- round(summary(fit2)$coef, 4)
+fit2glance <- round(glance(fit2)[1:6], 4)
+fit2coef
+fit2glance
+```
+
+#### Exhibit 6: Multivariable Regression (mpg ~ am + wt + cyl)
+```{r slr_mpg_am_two, include = TRUE, echo = TRUE, results = "asis"}
+fit3 <- lm(mpg ~ am + wt + cyl, data = mtcars)
+fit3coef <- round(summary(fit3)$coef, 4)
+fit3glance <- round(glance(fit3)[1:6], 4)
+fit3coef
+fit3glance
+```
+
+#### Exhibit 7: Multivariable Regression (mpg ~ am + wt + cyl + hp)
+```{r slr_mpg_am_three, include = TRUE, echo = TRUE, results = "asis"}
+fit4 <- lm(mpg ~ am + wt + cyl + hp, data = mtcars)
+fit4coef <- round(summary(fit4)$coef, 4)
+fit4glance <- round(glance(fit4)[1:6], 4)
+fit4coef
+fit4glance
+```
+
+
+#### Exhibit 8: Multivariable Regression (include all independent variables)
+```{r slr_mpg_am_nine, include = TRUE, echo = TRUE, results = "asis"}
+fit10 <- lm(mpg ~ ., data = mtcars)
+fit10coef <- round(summary(fit10)$coef, 4)
+fit10glance <- round(glance(fit10)[1:6], 4)
+fit10coef
+fit10glance
+```
+
+
+#### Exhibit 9: ANOVA
+```{r}
+mpg.anova <- anova(fit1, fit2, fit3, fit4, fit10)
+```
+
+
+
+
 
 ### T-test: Difference in Tooth Growth by Supplement
 The first step is to split data by supplement('supp').  We will use the t.test() function in R to evaluate whether the tooth length is longer when the supplement 'OJ' is used compared to 'VC' across all dose levels.  The boxplot might indicate that the supplement 'OJ' promotes greater tooth growth than 'VC'.  We will use a one-sided (right) to evaluate
@@ -269,10 +288,46 @@ Each criteria is binary: (1 point = criteria met acceptably; 0 points = criteria
 9. Was the report done in Rmd (knitr)?
 
 
-### Exhibit A-1 (Panel Plot): Illustrate the relationship of the different varaibles
+### Figure 1 (Panel Plot): Illustrate the relationship of each variable
 This panel plot provides a quick, high-level, illustration of a variable within the dataset against each other variable in the dataset.  The pu
 ```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
 pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
+```
 
-
-
+#### Figure 2: Variable Relationship to Miles per Gallon (MPG)
+This panel plot illustrates the relationship of variables with a high correlation, absolute value > 0.50, with the mpg.  Where it made sense boxplots are used, dotplots in other instances.
+```{r panel_plot_high_corr, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+par(mfrow = c(2,4), mar = c(6,4,1,1))
+g1 <- ggplot(mtcars, aes(x = cyl, y = mpg, group = cyl)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "# Cylinders", y = "MPG")
+g1
+g2 <- ggplot(mtcars, aes(x = disp, y = mpg, group = disp)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "disp", y = "MPG")
+g2
+g3 <- ggplot(mtcars, aes(x = hp, y = mpg, group = hp)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "Horespower", y = "MPG")
+g3
+g4 <- ggplot(mtcars, aes(x = drat, y = mpg, group = drat)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "drat", y = "MPG")
+g4
+g5 <- ggplot(mtcars, aes(x = wt, y = mpg, group = wt)) +
+            geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 0.75, binwidth = 0.5) +
+            labs(x = "Weight", y = "MPG")
+g5
+g6 <- ggplot(mtcars, aes(x = vs, y = mpg, group = vs)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "vs", y = "MPG")
+g6
+g7 <- ggplot(mtcars, aes(x = am, y = mpg, group = am)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "Auto/Manual", y = "MPG")
+g7
+g8 <- ggplot(mtcars, aes(x = carb, y = mpg, group = carb)) +
+            geom_boxplot(width = 0.5) +
+            labs(x = "Carberator", y = "MPG")
+g8
+```
