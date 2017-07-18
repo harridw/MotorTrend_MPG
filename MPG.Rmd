@@ -34,6 +34,9 @@ A first step in the analysis is to look at the effect of transmission type, auto
 Given that this is an R dataset we can simply use data(ToothGrowth) to load the dataset into the current enviromnent.  
 ```{r load_mtcars, include = TRUE, echo = TRUE}
 data(mtcars)
+mtcars$am <- as.factor(mtcars$am)
+mtcars$cyl <- as.factor(mtcars$cyl)
+
 ```
 
 
@@ -49,32 +52,14 @@ summary(mtcars)
 ```
 
 
-### Correlation Matrix (Upper Triangle)
+### Relationship of Variables
+Three figures or exhibits are provided in the Appendix to provide insight to the data in 'mtcars'. Figure 1 and Figure 2 compare each of the variables, or terms, in the data set against one another.  Figure 1 provides a panel plot of the relationship between each variable.  Similarly, Figure 2 shows the relationship of each variable in a correlation matrix.
+
+#### Correlation Matrix (Upper Triangle)
 This table provides an easy way to look at the relationship between the different variables of the 'mtcars' dataset.  Along the diagonal, we see a value of 1, representing the correlation of a variable(e.g. mpg) and itself.  A correlation factor, or value, is between -1 and 1.  A positive correlation factir indicates that a variable changes directionally with another defined variable.  A negative correlation suggests that two variables move in opposite directions.  The closer the correlation factor is to zero indicates lower correlation.  As correlation moves closer to -1 or 1, the stroger is the correlation or relationship.
 
-#### Exhibit 1: Correlation Factor Matrix
-```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "asis"}
-corr.grid <- corrplot(round(cor(mtcars[,1:11]), 3), method = "number", type = "upper")
-corr.grid
-```
-
-```{r mpg_corr_grid, include = FALSE, echo = FALSE, results = "hide"}
-mpg.corr <- round(cor(mtcars[,1:11]), 3)[1,]
-mpg.cyl <- mpg.cor[2]
-mpg.disp <- mpg.cor[3]
-mpg.hp <- mpg.cor[4]
-mpg.drat <- mpg.cor[5]
-mpg.wt <- mpg.cor[6]
-mpg.qsec <- mpg.cor[7]
-mpg.vs <- mpg.cor[8]
-mpg.am <- mpg.cor[9]
-mpg.gear <- mpg.cor[10]
-mpg.carb <- mpg.cor[11]
-```
-
-
-### Relationship of Variables
-Along with the table of correlation factors, the panel plots (see Appendix Figure 1 and Figure 2) provides additional insight to the relation of each variable to MPG as well as each other. These plots, along with the correlation matrix, are considered for purpose of the further analysis, including regression analysis.
+#### Plot MPG Relationships
+As the focus of the analysis is evaluating drivers or predictors of mpg, Figure 3 plots the relationship of each variable to mpg.  Only 8 variables, rather than 10 available, are illustrated.  The variables excluded from the plots have correlation factor <0.50 (absolute value).  This provides a focus on those variables creating the most influence.
 
 
 ## Regression Analysis
@@ -89,7 +74,7 @@ The initial model looks at the effect of transmission type (automatic vs. manual
 This simple linear regression produces an intercept of 17.147 mpg.  If the car has a manual transmission, we would estimate an additional 7.25 mpg.  As previously stated, it is idealistic to assume that the type of transmission, automatic vs. manual, could define the mpg of a car.  This is further validated by a relatively low adjusted r.square of 0.3385, meaning that roughly 34% of the change in mpg is explained by transmission type alone.
 
 ```{r slr_mpg_am, include = TRUE, echo = TRUE, results = "asis"}
-fit1 <- lm(mpg ~ am, data = mtcars)
+fit1 <- lm(mpg ~ factor(am), data = mtcars)
 fit1coef <- round(summary(fit1)$coef, 4)
 fit1glance <- round(glance(fit1)[1:6], 4)
 fit1coef
@@ -98,12 +83,14 @@ fit1glance
 
 
 ### Automatic versus Manual (Multivariable Regression)
-To build a multivariable regression that best fits the data, we could add one variable, or term, at a time.  The goal is to avoid underfitting or overfitting the model.  Therefore, we want to include variables that minimizes the residual, maximizes adjusted r.square, and statistically significant (anova results). We will review our exploratory analysis to add variables, no more than 2 variables at a time.
+To build a multivariable regression that best fits the data, we could add one variable, or term, at a time.  The goal is to avoid underfitting or overfitting the model.  Therefore, we want to include variables that minimizes the residual, maximizes adjusted r.square, and statistically significant. We will review our exploratory analysis to add variables, no more than 2 variables at a time.  As transmission (automatic vs. manual) is a key variable of the analysis, it is retained in all regression models developed.
 
 
 #### Exhibit 5: Multivariable Regression (mpg ~ am + wt)
-```{r slr_mpg_am_one, include = TRUE, echo = TRUE, results = "asis"}
-fit2 <- lm(mpg ~ am + wt, data = mtcars)
+The next variable we add to the regression model is 'wt'.  This variable has highest correlation, -0.87, with mpg.  This model produces an adjusted r.square of 0.7358, explaining more than twice as much of the mpg variation than transmission (automatic vs. manual) alone.  The residual squared error (sigma) is also reduced from 4.9 to 3.1.  The addition of 'wt' also changes the coefficients for the intercept and transmission (manual)
+
+```{r mlr_am_plus_one, include = TRUE, echo = TRUE, results = "asis"}
+fit2 <- lm(mpg ~ factor(am) + wt, data = mtcars)
 fit2coef <- round(summary(fit2)$coef, 4)
 fit2glance <- round(glance(fit2)[1:6], 4)
 fit2coef
@@ -111,17 +98,31 @@ fit2glance
 ```
 
 #### Exhibit 6: Multivariable Regression (mpg ~ am + wt + cyl)
-```{r slr_mpg_am_two, include = TRUE, echo = TRUE, results = "asis"}
-fit3 <- lm(mpg ~ am + wt + cyl, data = mtcars)
+In the following regression model, we added the variable 'cyl' as a factor, due to limited number of discrete values (4, 6, 8).  This regression model improves the adjusted r.square to 0.8134 and reduces the residual (sigma) to 2.6032 while maintaining p-value = 0 (rounded to 4 decimal places).  Each of the additional variables (wt, cyl6, cyl8) is significant at the 0.05 threshold.
+
+```{r mlr_am_plus_two, include = TRUE, echo = TRUE, results = "asis"}
+fit3 <- lm(mpg ~ factor(am) + wt + factor(cyl), data = mtcars)
 fit3coef <- round(summary(fit3)$coef, 4)
 fit3glance <- round(glance(fit3)[1:6], 4)
 fit3coef
 fit3glance
 ```
 
+```{r mlr_am_plus_three_elim, include = FALSE, echo = FALSE, results = "hide"}
+fit4E <- lm(mpg ~ factor(am) + wt + factor(cyl) + drat, data = mtcars)
+fit4Ecoef <- round(summary(fit4E)$coef, 4)
+fit4Eglance <- round(glance(fit4E)[1:6], 4)
+fit4Ecoef
+fit4Eglance
+```
+
 #### Exhibit 7: Multivariable Regression (mpg ~ am + wt + cyl + hp)
-```{r slr_mpg_am_three, include = TRUE, echo = TRUE, results = "asis"}
-fit4 <- lm(mpg ~ am + wt + cyl + hp, data = mtcars)
+In this regression model, we add the variable 'hp'.  Besides 'drat' this variable has the most significant correlation with mpg of the remaining variables.  The variable 'drat' was considered.  However, it failed to meet several important criteria, specifically:  input p-value 0.8613 not significant; adjusted r.square decreases rather than increase; and the residual (sigma) increases rather than decrease.
+
+For reasons indicated above, we selected to add the variable 'hp' to the regression model instead of 'drat'.  The addition of 'hp' improves the adjusted r.square to 0.8401 and reduces the residual to 2.4101.  The only concern is the effect it has on factor(cyl)8.  Intuitively, we would expect the coeffient for 'cyl8' to reduce mpg more than 'cyl6'.  This implies a different interaction between 'hp' and 'cyl8'.  As a result, the p-value, 0.3523, for factor(cyl)8 is no longer significant at 0.05 level.
+
+```{r mlr_am_plus_three, include = TRUE, echo = TRUE, results = "asis"}
+fit4 <- lm(mpg ~ factor(am) + wt + factor(cyl) + hp, data = mtcars)
 fit4coef <- round(summary(fit4)$coef, 4)
 fit4glance <- round(glance(fit4)[1:6], 4)
 fit4coef
@@ -130,6 +131,7 @@ fit4glance
 
 
 #### Exhibit 8: Multivariable Regression (include all independent variables)
+The purpose of this exhibit is to explore a regression model that includes all variables, or terms, in the 'mtcars' data set.  Although we did not include an variables as a factor, it is clear that including all variables does not produce a better model.  The adjusted r.square and residual are both worse than including only the vaiables am, wt, cyl (factor), and hp.  Additionally, each of the variables has a p-value that is not significant at 0.05 level. 
 ```{r slr_mpg_am_nine, include = TRUE, echo = TRUE, results = "asis"}
 fit10 <- lm(mpg ~ ., data = mtcars)
 fit10coef <- round(summary(fit10)$coef, 4)
@@ -140,119 +142,37 @@ fit10glance
 
 
 #### Exhibit 9: ANOVA
+The findings provided below for Model 4: mpg ~ factor(am) + wt + factor(cyl) + hp produce a p-value of 0.026935, which indicates that this model is significant.  These variables further contribute to the accuracy of the model.
+
 ```{r}
-mpg.anova <- anova(fit1, fit2, fit3, fit4, fit10)
+mpg.anova <- anova(fit1, fit2, fit3, fit4)
+mpg
 ```
 
 
+## Residuals & Diagnostics
 
-
-
-### T-test: Difference in Tooth Growth by Supplement
-The first step is to split data by supplement('supp').  We will use the t.test() function in R to evaluate whether the tooth length is longer when the supplement 'OJ' is used compared to 'VC' across all dose levels.  The boxplot might indicate that the supplement 'OJ' promotes greater tooth growth than 'VC'.  We will use a one-sided (right) to evaluate
-```{r supp_ttl_difference, include = TRUE, echo = TRUE, results = "hold"}
-vc_ttl <- select(subset(ToothGrowth, supp == "VC"), supp, len)
-oj_ttl <- select(subset(ToothGrowth, supp == "OJ"), supp, len)
-
-t.test(oj_ttl$len,vc_ttl$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
+```{r plot_residuals, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+par(mfrow = c(2,2))
+plot(fit4)
 ```
 
 
-The t.test results in a p-value = 0.03032. As this is less than our target $\alpha =$ 0.05, we reject the NULL hypothesis that there is no significant difference in favor of the alternative hypothesis, $H_a$, that 'OJ' promotes greater tooth growth than the supplement 'VC'.
+#### Residuals vs Fitted
+This plot shows if residuals have non-linear patterns. The fact that the residuals are fairly well-distributed around the fitted line, and no particular pattern, we are fairly confident that the selected regression model is a relatively good fit.  There are not 
 
 
-### T-test: Difference in Tooth Growth by Supplement with a dose level
-We are focus on the difference in tooth growth produced by a supplement and dose level.  Before applying t.test(), we will subset data to reflect ths specified populations.  We will create 6 data subsets, each represent a specific supp and dose.  For example, vc05 represents data for the supp 'VC' at a 0.5 dose level.  Similarly, oj10 reprsents data for the supp 'OJ' and dose level of 1.0.
+#### Residuals vs Fitted
+This plot shows if residuals are normally distributed. It’s good fit if residuals are lined well on the straight dashed line.  In our plot, the residuals are fairly close to the straight line.  However, there appears to be a little greater distance for outliers, particularly upper right corner.  We may want to explore outliers a little further.
 
 
-##### T-test: Greater Tooth Growth with the supplement 'OJ' versus 'VC' at dose = 0.5
-```{r supp_dose05_difference, include = TRUE, echo = TRUE, results = "hold"}
-vc05 <- select(subset(ToothGrowth, supp == "VC" & dose == 0.5), supp, len)
-vc10 <- select(subset(ToothGrowth, supp == "VC" & dose == 1.0), supp, len)
-vc20 <- select(subset(ToothGrowth, supp == "VC" & dose == 2.0), supp, len)
-oj05 <- select(subset(ToothGrowth, supp == "OJ" & dose == 0.5), supp, len)
-oj10 <- select(subset(ToothGrowth, supp == "OJ" & dose == 1.0), supp, len)
-oj20 <- select(subset(ToothGrowth, supp == "OJ" & dose == 2.0), supp, len)
-
-t.test(oj05$len,vc05$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
+#### Scale-Loation
+We use the scale-location plot to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are equally spread around a horizontal line along the range of predictors.  Although not a horizontal line, the fitted line does not show much slope up or down.  Additionally, the residual points are fairly evenly distributed about the line, no narrowing or spreading.
 
 
-We are testing whether we would reject the NULL hypothesis that tooth growth for 'VC' and 'OJ' are similar at a dose = 0.5.  The alternative hypothesis, $H_a$, is that 'OJ' promotes greater tooth growth at dose = 0.5.  Performing a t-test we obtained a p-value = 0.003179. This is less than our target $\alpha =$ 0.05 so we reject the NULL hypothesis in favor of the alternative hypothesis, supp 'OJ' promotes greater tooth growth than 'VC' at a dose = 0.05.
+#### Residuals vs. Leverage
+This is the final plot to examine.  The purpose of this plot is identify "influential" outliers.  If an outlier does not change, maybe minimally changes, the regression line whether it is included or excluded, the outlier is not "influential".  If outliers, residual points, appear in the upper right or lower right corner of the plot, thee points may be influential against the regression line.
 
-
-##### T-test: Greater Tooth Growth with the supplement 'OJ' versus 'VC' at dose = 1.0
-```{r supp_dose10_difference, include = TRUE, echo = TRUE, results = "hold"}
-t.test(oj10$len,vc10$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-At a dose = 0.5, the t.test calculated p-value = 0.0005192 is very small, well below the threshold $\alpha =$ 0.05. We reject the NULL hypothesis in favor of the alternative hypothesis, $H_a$: $\mu_{oj}$ > $\mu_{vc}$, that the supplement 'OJ' promotes greater tooth growth than the supplement'VC'.
-
-
-##### T-test: Difference in Tooth Growth by Supplement with dose = 2.0
-```{r supp_dose20_difference, include = TRUE, echo = TRUE, results = "hold"}
-t.test(oj20$len,vc20$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-Our final t.test, comparing tooth growth for supplements 'OJ' and 'VC', reflects a dose = 2.0.  If you recall, the boxplot might suggest that there is no significant different in the mean tooth growth for the two supplements.  The t.test, p-value =  0.5181 is rather larger, well above the threshold $\alpha =$ 0.05. We accept the NULL hypothesis which is consistent with what we expected by looking at our boxplot.
-
-
-### T-test: Difference in Tooth Growth due to dose
-The overall goal is to determine whether increasing the dose of a supplement('supp') results in greater tooth growth.  Because results are not different at the 95% confidence interval we might be able to compare data without regard to the type of supplement.  We have elected to look at the effects of dose within each supplement. For each supplement, separately, we will compare tooth length for the different dose levels.  The initial comparison is tooth length with a dose = 2.0 to a dose = 0.5.
-
-
-##### Tooth Growth: Supp ('OJ') by comparing dose [0.5, 2.0]
-```{r tooth_growth_dose_max_oj, include = TRUE, echo = TRUE, results = "hold"}
-t.test(oj20$len,oj05$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-In this test, we seek to evaluate whether, for the supplement 'OJ', a dose = 2.0 promotes greater tooth growth than a dose = 0.05.  Base on t.test p-value = 6.619e-07 (0.0000006619), very small, we reject the NULL hypothesis that there is no difference in tooth growth between the dose levels, 0.5 & 2.0.  In other words, the t.test results suggest that there is greater tooth growth with a dose = 2.0 versus a dose = 0.5.
-
-
-##### Tooth Growth: Supp ('VC') by comparing dose [0.5, 2.0]
-```{r tooth_growth_dose_max_vc, include = TRUE, echo = TRUE, results = "hold"}
-t.test(vc20$len,vc05$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-Results for the supplement = 'VC' are consistent with 'OJ'.   With a p-value = 4.682e-08 (0.00000004682), also very small, we reject the NULL hypothesis.  Again, this confirms that, at a 95% confidence level, there is greater tooth growth associated with the supplement 'VC' at a dose = 2.0 versus a dose = 0.5.
-
-
-#### Tooth Growth:  Significant for interim dose levels
-Although it appears to be clear that there is greater tooth growth for a higher dose, 2.0 versus 0.5, of either supplement, 'VC' and 'OJ', we wish to determine whether tooth growth is greater for interim dose levels (e.g. dose = 1.0 versus dose = 0.5 and does = 2.0 versus dose = 1.0).
-
-
-##### Tooth Growth: Supp ('OJ') by comparing interim dose [1.0 versus 0.5]
-```{r tooth_growth_dose_interim1_oj, include = TRUE, echo = TRUE, results = "hold"}
-t.test(oj10$len,oj05$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-##### Tooth Growth: Supp ('OJ') by comparing interim dose [2.0 versus 1.0]
-```{r tooth_growth_dose_interim2_oj, include = TRUE, echo = TRUE, results = "hold"}
-t.test(oj20$len,oj10$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-For the supplement 'OJ', the p-value for each of the interim dose increases are below our threshold of $\alpha =$ 0.05, 4.392e-05 (0.00004392) and 0.0196, respectively.  We reject the NULL hypothesis for both incremental dose levels.  Tooth growth associated with the higher dose of the supplement 'OJ' is greater than the lower dose of the supplement 'OJ'.
-
-
-##### Tooth Growth: Supp ('VC') by comparing interim dose [1.0 versus 0.5]
-```{r tooth_growth_dose_interim1_vc, include = TRUE, echo = TRUE, results = "hold"}
-t.test(vc10$len,vc05$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-##### Tooth Growth: Supp ('VC') by comparing interim dose [2.0 versus 1.0]
-```{r tooth_growth_dose_interim2_vc, include = TRUE, echo = TRUE, results = "hold"}
-t.test(vc20$len,vc10$len, paired = FALSE, var.equal = FALSE, alternative = "greater")
-```
-
-
-For the supplement 'VC', similar to results for the supplement 'OJ', the p-value for each of the interim dose increases are below our threshold of $\alpha =$ 0.05, 3.406e-07 (0.0000003406) and 4.578e-05 (0.00004578), respectively.  We reject the NULL hypothesis for both incremental dose levels.  Tooth growth associated with the higher dose of the supplement 'VC' is greater than the lower dose of the supplement 'VC'.
 
 
 ## Conclusion
@@ -263,20 +183,19 @@ From our t.test, the p-values were rather small, with the exception of testing w
 ## Appendix
 The information provided below is an outline of the request or question driving this assingment and analysis of data for different cars and related miles per gallon (MPG).
 
-## Instructions
-
+### Instructions
 You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
 
 “Is an automatic or manual transmission better for MPG”
 "Quantify the MPG difference between automatic and manual transmissions"
 
-### Review criteria
+#### Review criteria
 
-#### Peer Grading
+##### Peer Grading
 The criteria that your classmates will use to evaluate and grade your work are shown below.
 Each criteria is binary: (1 point = criteria met acceptably; 0 points = criteria not met acceptably)
 
-#### Criteria
+##### Criteria
 1. Did the student interpret the coefficients correctly?
 2. Did the student do some exploratory data analyses?
 3. Did the student fit multiple models and detail their strategy for model selection?
@@ -294,7 +213,16 @@ This panel plot provides a quick, high-level, illustration of a variable within 
 pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
 ```
 
-#### Figure 2: Variable Relationship to Miles per Gallon (MPG)
+
+#### Figure 2: Correlation Factor Matrix
+```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "asis"}
+corr.grid <- corrplot(round(cor(mtcars[,1:11]), 3), method = "number", type = "upper",
+                      add = FALSE, order = "original", is.corr = TRUE)
+corr.grid
+```
+
+
+#### Figure 3: Variable Relationship to Miles per Gallon (MPG)
 This panel plot illustrates the relationship of variables with a high correlation, absolute value > 0.50, with the mpg.  Where it made sense boxplots are used, dotplots in other instances.
 ```{r panel_plot_high_corr, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
 par(mfrow = c(2,4), mar = c(6,4,1,1))
