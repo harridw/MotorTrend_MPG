@@ -20,7 +20,7 @@ packages <- c("plyr", "dplyr", "data.table", "dtplyr", "lubridate", "ggplot2", "
 ipak(packages)
 ```
 
-### Overview  
+### Executive Summary  
 Motor Trend has provided a data set, mtcars, with 32 observations from the 1974 Motor Trend magazine.  They wish to understand the relationship between a number of variables, predictors, and miles-per-gallon (MPG), outcome, Specifically, were are asked to answer the following two questions:
 
 * Is an automatic or manual transmission better for MPG?
@@ -52,7 +52,7 @@ The focus of our analysis is miles per gallon (MPG).  Starting with simple linea
 #### Regression Models
 The initial model, 'fit1', looks at the effect of transmission type (automatic vs. manual) on the MPG of a car.  We also create a 'fit10' model that includes all 10 independent variables.  We perform a stepwise processs, adding & removing variables, to select the best variables.  This can be done manually and/or using a step() function which uses algorithm to evaluate whether variables contribute significantly to predicting mpg.
 
-```{r regression_models, include = TRUE, echo = TRUE, results = "markup"}
+```{r regression_models, include = TRUE, echo = TRUE, results = "hide"}
 fit1 <- lm(mpg ~ am, data = mtcars2)
 coef1 <- round(summary(fit1)$coef, 4)
 glance1 <- round(glance(fit1)[1:6], 4)
@@ -100,29 +100,44 @@ mpg.anova
 Below is a panel plot of residuals.  Understanding residuals is critical to understanding how well the regression model fits the data, goodness of fit.  The different plots provide some insight to how closely the regression line fits the data, explaining changes in mpg.
 
 ```{r plot_residuals, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
-par(mfrow = c(2,2), mar = c(5,4,1,1))
-plot(fit4)
+par(mfrow = c(2,2), mar = c(5,4,2,1))
+plot(fit4, which = 1:4)
 ```
 
+** Interpreting the Plots**  
+1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. Want to see that the residuals are fairly well-distributed around the fitted line, and no particular pattern exists. 
+2. Normal Q-Q: This plot shows if residuals are normally distributed. It’s good fit if residuals are lined closely the straight dashed line.
+3. Scale-Location: Use to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are equally spread around a horizontal line along the entire range of predictors.
+4. Cooks distance: The purpose of this plot is identify may be considered outliers.  The "Cooks distance" is considerably different from others. These points may be influential against the regression line, changing intercept and/or slope.
 
-#### Residuals vs Fitted
-This plot shows if residuals have non-linear patterns. The fact that the residuals are fairly well-distributed around the fitted line, and no particular pattern, we are fairly confident that the selected regression model is a relatively good fit. 
-
-
-#### Normal Q-Q
-This plot shows if residuals are normally distributed. It’s good fit if residuals are lined well on the straight dashed line.  In our plot, the residuals are fairly close to the straight line.  However, there appears to be a little greater distance for outliers, particularly upper right corner.  We may want to explore outliers a little further.
-
-
-#### Scale-Location
-We use the scale-location plot to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are equally spread around a horizontal line along the range of predictors.  Although not a horizontal line, the fitted line does not show much slope up or down.  Additionally, the residual points are fairly evenly distributed about the line, no narrowing or spreading.
-
-#### Residuals vs. Leverage
-This is the final plot to examine.  The purpose of this plot is identify "influential" outliers.  If an outlier does not change, maybe minimally changes, the regression line whether it is included or excluded, the outlier is not "influential".  If outliers, residual points, appear in the upper right or lower right corner of the plot, thee points may be influential against the regression line.
 
 ### Additional Regression Diagnostics
-In addition to plots provided above, we can look evaluate our model through some other tests.  Below, we look at a couple and explain the findings.
+In addition to plots provided above, we can look evaluate our model through some other tests. Below, we look at a couple and explain the findings.
 
-#### Hat Values
+#### High Leverage/Influential Data Points
+There are two functions, dfbetas() and hatvalues() to identify points of interest.  We could also use the function influence.measures() to obtain several measures about influence of data points.
+
+##### DFBETAS
+Measure that standardizes the absolute difference in parameter estimates between a (mixed effects) regression model based on a full set of data, and a model from which a (potentially influential) subset of data is removed
+```{r dfbetas_influence, include = TRUE, echo = TRUE, results = "markup"}
+fit4.dfb <- dfbetas(fit4, parameters = 0, sort = TRUE)   ## ordered based on magnitude
+influence.fit4.id <- which(fit4.dfb > (2/(length(mtcars$mpg)^.5))) ##  dfbetas > #2 / sqrt(n)
+rbind(influence.fit4.id, fit4.dfb[influence.fit4.id])   ## value relfects a car & fit4 variable combination
+```
+
+##### HATVALUES
+A hat value measures the leverage of Xi variable, indicating that the point is sufficiently far from the mean of X.  The further the distance from the mean, the greater the leverage.  NOTE:  Leverage does not mean it influences the regression coeffiencent.
+```{r hatvalues_leverage, include = TRUE, echo = TRUE, results = "markup"}
+fit4.hat <- hatvalues(fit4)
+leverage.fit4.id <- which(fit4.hat > (2*(4+1)/length(mtcars2$mpg))) ##  hatvalue > #2*(k+1)/n
+fit4.hat[leverage.fit4.id] 
+```
+
+##### INFLUENCE MEAUSRES
+The function influence.measures provides a summary of multiple measures to evaluate the influence of a point, or observation, on the coefficients.
+```{r influence.measures, include = TRUE, echo = TRUE, results = "markup"}
+summary(influence.measures(fit4))
+```
 
 
 
