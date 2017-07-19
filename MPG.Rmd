@@ -42,12 +42,9 @@ Our exploratory analysis provides some quick insigtht to the data of 'mtcars' da
 
 
 #### Summary view of dataset
-```{r dataset_overview, include = TRUE, echo = TRUE, results = "hold"}
+```{r dataset_overview, include = TRUE, echo = TRUE, results = "markup"}
 str(mtcars)
-
-
 head(mtcars)
-
 ```
 
 
@@ -98,7 +95,7 @@ fit2glance
 #### Exhibit 3: Multivariable Regression (mpg ~ am + wt + cyl)
 In the following regression model, we added the variable 'cyl' as a factor, due to limited number of discrete values (4, 6, 8).  This regression model improves the adjusted r.square to 0.8134 and reduces the residual (sigma) to 2.6032 while maintaining p-value = 0 (rounded to 4 decimal places).  Each of the additional variables (wt, cyl6, cyl8) is significant at the 0.05 threshold.
 
-```{r mlr_am_plus_two, include = TRUE, echo = TRUE, results = "asis"}
+```{r mlr_am_plus_two, include = TRUE, echo = TRUE, results = "markup"}
 fit3 <- lm(mpg ~ factor(am) + wt + factor(cyl), data = mtcars)
 fit3coef <- round(summary(fit3)$coef, 4)
 fit3glance <- round(glance(fit3)[1:6], 4)
@@ -119,7 +116,7 @@ In this regression model, we add the variable 'hp'.  Besides 'drat' this variabl
 
 For reasons indicated above, we selected to add the variable 'hp' to the regression model instead of 'drat'.  The addition of 'hp' improves the adjusted r.square to 0.8401 and reduces the residual to 2.4101.  The only concern is the effect it has on factor(cyl)8.  Intuitively, we would expect the coeffient for 'cyl8' to reduce mpg more than 'cyl6'.  This implies a different interaction between 'hp' and 'cyl8'.  As a result, the p-value, 0.3523, for factor(cyl)8 is no longer significant at 0.05 level.
 
-```{r mlr_am_plus_three, include = TRUE, echo = TRUE, results = "asis"}
+```{r mlr_am_plus_three, include = TRUE, echo = TRUE, results = "markup"}
 fit4 <- lm(mpg ~ factor(am) + wt + factor(cyl) + hp, data = mtcars)
 fit4coef <- round(summary(fit4)$coef, 4)
 fit4glance <- round(glance(fit4)[1:6], 4)
@@ -130,7 +127,7 @@ fit4glance
 
 #### Exhibit 8: Multivariable Regression (include all independent variables)
 The purpose of this exhibit is to explore a regression model that includes all variables, or terms, in the 'mtcars' data set.  Although we did not include an variables as a factor, it is clear that including all variables does not produce a better model.  The adjusted r.square and residual are both worse than including only the vaiables am, wt, cyl (factor), and hp.  Additionally, each of the variables has a p-value that is not significant at 0.05 level. 
-```{r slr_mpg_am_nine, include = TRUE, echo = TRUE, results = "asis"}
+```{r slr_mpg_am_nine, include = TRUE, echo = TRUE, results = "markup"}
 fit10 <- lm(mpg ~ ., data = mtcars)
 fit10coef <- round(summary(fit10)$coef, 4)
 fit10glance <- round(glance(fit10)[1:6], 4)
@@ -142,14 +139,14 @@ fit10glance
 #### Exhibit 9: ANOVA
 The findings provided below for Model 4: mpg ~ factor(am) + wt + factor(cyl) + hp produce a p-value of 0.026935, which indicates that this model is significant.  These variables further contribute to the accuracy of the model.
 
-```{r}
+```{r model_compare_anova, include = TRUE, echo = TRUE, results = "markup"}
 mpg.anova <- anova(fit1, fit2, fit3, fit4)
-mpg
+mpg.anova
 ```
 
 
-## Residuals & Diagnostics
-
+### Residuals & Diagnostics
+Below is a panel plot of residuals.  Understanding residuals is critical to understanding how well the regression model fits the data, goodness of fit.  The different plots provide some insight to 
 ```{r plot_residuals, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
 par(mfrow = c(2,2))
 plot(fit4)
@@ -160,11 +157,11 @@ plot(fit4)
 This plot shows if residuals have non-linear patterns. The fact that the residuals are fairly well-distributed around the fitted line, and no particular pattern, we are fairly confident that the selected regression model is a relatively good fit. 
 
 
-#### Residuals vs Fitted
+#### QQ
 This plot shows if residuals are normally distributed. It’s good fit if residuals are lined well on the straight dashed line.  In our plot, the residuals are fairly close to the straight line.  However, there appears to be a little greater distance for outliers, particularly upper right corner.  We may want to explore outliers a little further.
 
 
-#### Scale-Loation
+#### Scale-Location
 We use the scale-location plot to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are equally spread around a horizontal line along the range of predictors.  Although not a horizontal line, the fitted line does not show much slope up or down.  Additionally, the residual points are fairly evenly distributed about the line, no narrowing or spreading.
 
 
@@ -172,7 +169,7 @@ We use the scale-location plot to check the assumption of equal variance (homosc
 This is the final plot to examine.  The purpose of this plot is identify "influential" outliers.  If an outlier does not change, maybe minimally changes, the regression line whether it is included or excluded, the outlier is not "influential".  If outliers, residual points, appear in the upper right or lower right corner of the plot, thee points may be influential against the regression line.
 
 
-## Conclusion
+### Conclusion
 Following our review of Exploratory Data Analysis, it was decided to test two assumptions.  From the boxplot, it appeared that the supplement 'OJ' promoted greater tooth growth than the supplement 'VC'.  It was also apparent that a higher dose promoted greater tooth growth, regardless of supplement introduced.  We chose to test these assumptions by setting NULL hypothesis that there was no difference in the tooth growth for supplement 'OJ' versus 'VC' and a higher dose versus lower dose.  The alternative hypothesis being that 'OJ' promotes greater tooth growth than 'VC' and a higher dose promotes greater tooth growth than a lower dose.
 
 From our t.test, the p-values were rather small, with the exception of testing whether 'OJ' promotes greater tooth growth than 'VC' at a dose = 2.0, indicating that we reject the NULL hypothesis.  In summary, the analysis suggests that 'OJ' promotes greater tooth growth than 'VC'.  Additionally, regardless of the supplement selected, 'OJ' or 'VC', a higher dose of the supplement promotes greater tooth growth than lower dose.
@@ -222,7 +219,7 @@ corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE,
 #### Figure 3: Variable Relationship to Miles per Gallon (MPG)
 This panel plot illustrates the relationship of variables with a high correlation, absolute value > 0.50, with the mpg.  Where it made sense boxplots are used, dotplots in other instances.
 ```{r panel_plot_high_corr, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
-par(mfrow = c(2,4), mar = c(6,4,1,1))
+par(mfrow = c(2,4))
 g1 <- ggplot(mtcars, aes(x = cyl, y = mpg, group = cyl)) +
             geom_boxplot(width = 0.5) +
             labs(x = "# Cylinders", y = "MPG")
