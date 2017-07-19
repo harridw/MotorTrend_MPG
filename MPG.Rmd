@@ -34,9 +34,6 @@ A first step in the analysis is to look at the effect of transmission type, auto
 Given that this is an R dataset we can simply use data(ToothGrowth) to load the dataset into the current enviromnent.  
 ```{r load_mtcars, include = TRUE, echo = TRUE}
 data(mtcars)
-mtcars$am <- as.factor(mtcars$am)
-mtcars$cyl <- as.factor(mtcars$cyl)
-
 ```
 
 
@@ -70,7 +67,7 @@ The focus of our analysis is miles per gallon (MPG).  More specifically, we want
 The initial model looks at the effect of transmission type (automatic vs. manual) on the miles per gallon (MPG) of a car.  It is important to note that the variable 'am' contains a 0 (automatic) or 1 (manual).  So the baseline, or intercept, reflects the average mpg for a car with automatic transmission.  The 'am' coefficient represents the average change in mpg for a car with manual transmission.
 
 
-#### Exhibit 4: Simple Linear Regression (mpg ~ am)
+#### Exhibit 1: Simple Linear Regression (mpg ~ am)
 This simple linear regression produces an intercept of 17.147 mpg.  If the car has a manual transmission, we would estimate an additional 7.25 mpg.  As previously stated, it is idealistic to assume that the type of transmission, automatic vs. manual, could define the mpg of a car.  This is further validated by a relatively low adjusted r.square of 0.3385, meaning that roughly 34% of the change in mpg is explained by transmission type alone.
 
 ```{r slr_mpg_am, include = TRUE, echo = TRUE, results = "asis"}
@@ -83,11 +80,10 @@ fit1glance
 
 
 ### Automatic versus Manual (Multivariable Regression)
-To build a multivariable regression that best fits the data, we could add one variable, or term, at a time.  The goal is to avoid underfitting or overfitting the model.  Therefore, we want to include variables that minimizes the residual, maximizes adjusted r.square, and statistically significant. We will review our exploratory analysis to add variables, no more than 2 variables at a time.  As transmission (automatic vs. manual) is a key variable of the analysis, it is retained in all regression models developed.
+To build a multivariable regression that best fits the data, we could add one variable, or term, at a time.  The goal is to avoid underfitting or overfitting the model.  Therefore, we want to include variables that minimizes the residual, maximizes adjusted r.square, and statistically significant. We will review our exploratory analysis to help select which variables to add.  As transmission (automatic vs. manual) is a key variable of the analysis, it is retained in all regression models developed.
 
-
-#### Exhibit 5: Multivariable Regression (mpg ~ am + wt)
-The next variable we add to the regression model is 'wt'.  This variable has highest correlation, -0.87, with mpg.  This model produces an adjusted r.square of 0.7358, explaining more than twice as much of the mpg variation than transmission (automatic vs. manual) alone.  The residual squared error (sigma) is also reduced from 4.9 to 3.1.  The addition of 'wt' also changes the coefficients for the intercept and transmission (manual)
+#### Exhibit 2: Multivariable Regression (mpg ~ am + wt)
+The next variable we add to the regression model is 'wt'.  This variable has highest correlation, -0.87, with mpg.  This model produces an adjusted r.square of 0.7358, explaining more than twice as much of the mpg variation than transmission alone.  The residual squared error (sigma) is also reduced from 4.9 to 3.1.  The addition of 'wt' also changes the coefficients for the intercept and transmission (manual), as anticipated
 
 ```{r mlr_am_plus_one, include = TRUE, echo = TRUE, results = "asis"}
 fit2 <- lm(mpg ~ factor(am) + wt, data = mtcars)
@@ -97,7 +93,7 @@ fit2coef
 fit2glance
 ```
 
-#### Exhibit 6: Multivariable Regression (mpg ~ am + wt + cyl)
+#### Exhibit 3: Multivariable Regression (mpg ~ am + wt + cyl)
 In the following regression model, we added the variable 'cyl' as a factor, due to limited number of discrete values (4, 6, 8).  This regression model improves the adjusted r.square to 0.8134 and reduces the residual (sigma) to 2.6032 while maintaining p-value = 0 (rounded to 4 decimal places).  Each of the additional variables (wt, cyl6, cyl8) is significant at the 0.05 threshold.
 
 ```{r mlr_am_plus_two, include = TRUE, echo = TRUE, results = "asis"}
@@ -116,7 +112,7 @@ fit4Ecoef
 fit4Eglance
 ```
 
-#### Exhibit 7: Multivariable Regression (mpg ~ am + wt + cyl + hp)
+#### Exhibit 4: Multivariable Regression (mpg ~ am + wt + cyl + hp)
 In this regression model, we add the variable 'hp'.  Besides 'drat' this variable has the most significant correlation with mpg of the remaining variables.  The variable 'drat' was considered.  However, it failed to meet several important criteria, specifically:  input p-value 0.8613 not significant; adjusted r.square decreases rather than increase; and the residual (sigma) increases rather than decrease.
 
 For reasons indicated above, we selected to add the variable 'hp' to the regression model instead of 'drat'.  The addition of 'hp' improves the adjusted r.square to 0.8401 and reduces the residual to 2.4101.  The only concern is the effect it has on factor(cyl)8.  Intuitively, we would expect the coeffient for 'cyl8' to reduce mpg more than 'cyl6'.  This implies a different interaction between 'hp' and 'cyl8'.  As a result, the p-value, 0.3523, for factor(cyl)8 is no longer significant at 0.05 level.
@@ -159,7 +155,7 @@ plot(fit4)
 
 
 #### Residuals vs Fitted
-This plot shows if residuals have non-linear patterns. The fact that the residuals are fairly well-distributed around the fitted line, and no particular pattern, we are fairly confident that the selected regression model is a relatively good fit.  There are not 
+This plot shows if residuals have non-linear patterns. The fact that the residuals are fairly well-distributed around the fitted line, and no particular pattern, we are fairly confident that the selected regression model is a relatively good fit. 
 
 
 #### Residuals vs Fitted
@@ -172,7 +168,6 @@ We use the scale-location plot to check the assumption of equal variance (homosc
 
 #### Residuals vs. Leverage
 This is the final plot to examine.  The purpose of this plot is identify "influential" outliers.  If an outlier does not change, maybe minimally changes, the regression line whether it is included or excluded, the outlier is not "influential".  If outliers, residual points, appear in the upper right or lower right corner of the plot, thee points may be influential against the regression line.
-
 
 
 ## Conclusion
@@ -215,11 +210,9 @@ pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
 
 
 #### Figure 2: Correlation Factor Matrix
-```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "asis"}
-mtcars.corr <- scale(cor(mtcars))
-corr.upper <- upper.tri(mtcars.corr, diag = FALSE)
-corr.grid <- round(mtcars.corr*corr.upper,3)
-corrplot(mtcars.corr, method = "number", type = "upper", add = FALSE, 
+```{r corr_matrix_grid, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+mtcars.cor <- cor(mtcars)
+corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE, 
                   order = "original", is.corr = TRUE)
 ```
 
