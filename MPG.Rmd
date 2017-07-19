@@ -157,16 +157,22 @@ plot(fit4)
 This plot shows if residuals have non-linear patterns. The fact that the residuals are fairly well-distributed around the fitted line, and no particular pattern, we are fairly confident that the selected regression model is a relatively good fit. 
 
 
-#### QQ
+#### Normal Q-Q
 This plot shows if residuals are normally distributed. It’s good fit if residuals are lined well on the straight dashed line.  In our plot, the residuals are fairly close to the straight line.  However, there appears to be a little greater distance for outliers, particularly upper right corner.  We may want to explore outliers a little further.
 
 
 #### Scale-Location
 We use the scale-location plot to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are equally spread around a horizontal line along the range of predictors.  Although not a horizontal line, the fitted line does not show much slope up or down.  Additionally, the residual points are fairly evenly distributed about the line, no narrowing or spreading.
 
-
 #### Residuals vs. Leverage
 This is the final plot to examine.  The purpose of this plot is identify "influential" outliers.  If an outlier does not change, maybe minimally changes, the regression line whether it is included or excluded, the outlier is not "influential".  If outliers, residual points, appear in the upper right or lower right corner of the plot, thee points may be influential against the regression line.
+
+### Additional Regression Diagnostics
+In addition to plots provided above, we can look evaluate our model through some other tests.  Below, we look at a couple and explain the findings.
+
+#### Hat Values
+
+
 
 
 ### Conclusion
