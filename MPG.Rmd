@@ -1,12 +1,12 @@
 ---
-title: "Statistical Inference: MotorTrend_MPG"
+title: "Regression Analysis: MotorTrend_MPG"
 author: "EHarris"
 date: "7/18/2017"
 output: html_document
 ---
 
-## Packages for Course 7 Project: Motor Trend MPG
-```{r setup, include = TRUE, echo = FALSE, results = "hide"}
+### Packages for Course 7 Project: Motor Trend MPG
+```{r setup, include = FALSE, echo = TRUE, results = "hide"}
 ipak <- function(pkg){
       new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
       if (length(new.pkg)) 
@@ -21,7 +21,7 @@ packages <- c("plyr", "dplyr", "data.table", "dtplyr", "lubridate", "ggplot2", "
 ipak(packages)
 ```
 
-## Overview  
+### Overview  
 You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
 
 * Is an automatic or manual transmission better for MPG?
@@ -30,47 +30,49 @@ You work for Motor Trend, a magazine about the automobile industry. Looking at a
 A first step in the analysis is to look at the effect of transmission type, automatic vs. manual, on miles per gallon (MPG).  Without much review of the dataset, it may be reasonable to expect that a manual transmission vehicle is associated with higher MPG.  Further review will uncover other items, such as vehicle weight and the number of cylinders (e.g. 4, 6, 8), that may contribute more significantly to the mileage of a vehicle.
 
 
-## Load Data  
+### Load Data  
 Given that this is an R dataset we can simply use data(ToothGrowth) to load the dataset into the current enviromnent.  
 ```{r load_mtcars, include = TRUE, echo = TRUE}
 data(mtcars)
 ```
 
 
-## Exploratory Data Analysis  
+### Exploratory Data Analysis  
 Our exploratory analysis provides some quick insigtht to the data of 'mtcars' data set.  We provide a chart of the correlation for each variable and two panel plots.  One of the panel plots, representing line graphs of the relationship for each variable, is illustrated in the Appendix.  The other panel plot, illustrated below in Exhibit 2, provides additional information about the relationship of variables to mpg.  The correlation matrix is used to determine which variables are included in the panel plot, based on correlation factor with absolute value > 0.5.
 
 
-### Summary view of dataset
+#### Summary view of dataset
 ```{r dataset_overview, include = TRUE, echo = TRUE, results = "hold"}
 str(mtcars)
+
+
 head(mtcars)
-summary(mtcars)
+
 ```
 
 
-### Relationship of Variables
+#### Relationship of Variables
 Three figures or exhibits are provided in the Appendix to provide insight to the data in 'mtcars'. Figure 1 and Figure 2 compare each of the variables, or terms, in the data set against one another.  Figure 1 provides a panel plot of the relationship between each variable.  Similarly, Figure 2 shows the relationship of each variable in a correlation matrix.
 
-#### Correlation Matrix (Upper Triangle)
-This table provides an easy way to look at the relationship between the different variables of the 'mtcars' dataset.  Along the diagonal, we see a value of 1, representing the correlation of a variable(e.g. mpg) and itself.  A correlation factor, or value, is between -1 and 1.  A positive correlation factir indicates that a variable changes directionally with another defined variable.  A negative correlation suggests that two variables move in opposite directions.  The closer the correlation factor is to zero indicates lower correlation.  As correlation moves closer to -1 or 1, the stroger is the correlation or relationship.
+##### Correlation Matrix (Upper Triangle)
+This table provides an easy way to look at the relationship between the different variables of the 'mtcars' dataset.  Along the diagonal, we see a value of 1, representing the correlation of a variable(e.g. mpg) and itself.  A correlation factor, or value, is between -1 and 1.  A positive correlation factor indicates that a variable changes directionally with another defined variable.  A negative correlation suggests that two variables move in opposite directions.  The closer the correlation factor is to zero indicates lower correlation.  As correlation moves closer to -1 or 1, the stroger is the correlation or relationship.
 
-#### Plot MPG Relationships
+##### Plot MPG Relationships
 As the focus of the analysis is evaluating drivers or predictors of mpg, Figure 3 plots the relationship of each variable to mpg.  Only 8 variables, rather than 10 available, are illustrated.  The variables excluded from the plots have correlation factor <0.50 (absolute value).  This provides a focus on those variables creating the most influence.
 
 
-## Regression Analysis
+#### Regression Analysis
 The focus of our analysis is miles per gallon (MPG).  More specifically, we want to understand what variables or terms influence the mpg of a car.  It might be reasonable and/or appropriate to include all variables within the 'mtcars' dataset to predict the mpg of a car.  However, we likely want to explore and understand whether each variable contributes to the estimate.  If we look at the correlation matrix, you can see that the variables 'cyl', 'disp', and 'wt' are similarly correlated with mpg, -0.85, -0.85, and -0.87 respectively.  This strong relationship is further suggested when we look at the correlation factor between these variables: 'cyl'~'disp' = 0.9;  'cyl'~'wt' = 0.78; and 'disp'~'wt' = 0.89.  We'll start with looking at 'mpg' related to the variable 'am', transmission (automatic vs. manual).
 
 
-### Automatic versus Manual Regression
+##### Automatic versus Manual Regression
 The initial model looks at the effect of transmission type (automatic vs. manual) on the miles per gallon (MPG) of a car.  It is important to note that the variable 'am' contains a 0 (automatic) or 1 (manual).  So the baseline, or intercept, reflects the average mpg for a car with automatic transmission.  The 'am' coefficient represents the average change in mpg for a car with manual transmission.
 
 
-#### Exhibit 1: Simple Linear Regression (mpg ~ am)
+##### Exhibit 1: Simple Linear Regression (mpg ~ am)
 This simple linear regression produces an intercept of 17.147 mpg.  If the car has a manual transmission, we would estimate an additional 7.25 mpg.  As previously stated, it is idealistic to assume that the type of transmission, automatic vs. manual, could define the mpg of a car.  This is further validated by a relatively low adjusted r.square of 0.3385, meaning that roughly 34% of the change in mpg is explained by transmission type alone.
 
-```{r slr_mpg_am, include = TRUE, echo = TRUE, results = "asis"}
+```{r slr_mpg_am, include = TRUE, echo = TRUE, results = "markup"}
 fit1 <- lm(mpg ~ factor(am), data = mtcars)
 fit1coef <- round(summary(fit1)$coef, 4)
 fit1glance <- round(glance(fit1)[1:6], 4)
@@ -85,7 +87,7 @@ To build a multivariable regression that best fits the data, we could add one va
 #### Exhibit 2: Multivariable Regression (mpg ~ am + wt)
 The next variable we add to the regression model is 'wt'.  This variable has highest correlation, -0.87, with mpg.  This model produces an adjusted r.square of 0.7358, explaining more than twice as much of the mpg variation than transmission alone.  The residual squared error (sigma) is also reduced from 4.9 to 3.1.  The addition of 'wt' also changes the coefficients for the intercept and transmission (manual), as anticipated
 
-```{r mlr_am_plus_one, include = TRUE, echo = TRUE, results = "asis"}
+```{r mlr_am_plus_one, include = TRUE, echo = TRUE, results = "markup"}
 fit2 <- lm(mpg ~ factor(am) + wt, data = mtcars)
 fit2coef <- round(summary(fit2)$coef, 4)
 fit2glance <- round(glance(fit2)[1:6], 4)
