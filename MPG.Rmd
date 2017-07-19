@@ -32,8 +32,9 @@ Under a simple linear regression model, it would appear that a manual transmissi
 Given that this is an R dataset we can simply use data(mtcars) to load the dataset into the current enviromnent.  
 ```{r load_mtcars, include = TRUE, echo = TRUE}
 data(mtcars)
-mtcars$am <- as.factor(mtcars$am)
-mtcars$cyl <- as.factor(mtcars$cyl) 
+mtcars2 <- mtcars
+mtcars2$am <- as.factor(mtcars2$am)
+mtcars2$cyl <- as.factor(mtcars2$cyl) 
 ```
 
 
@@ -52,11 +53,11 @@ The focus of our analysis is miles per gallon (MPG).  Starting with simple linea
 The initial model, 'fit1', looks at the effect of transmission type (automatic vs. manual) on the MPG of a car.  We also create a 'fit10' model that includes all 10 independent variables.  We perform a stepwise processs, adding & removing variables, to select the best variables.  This can be done manually and/or using a step() function which uses algorithm to evaluate whether variables contribute significantly to predicting mpg.
 
 ```{r regression_models, include = TRUE, echo = TRUE, results = "markup"}
-fit1 <- lm(mpg ~ am, data = mtcars)
+fit1 <- lm(mpg ~ am, data = mtcars2)
 coef1 <- round(summary(fit1)$coef, 4)
 glance1 <- round(glance(fit1)[1:6], 4)
 
-fit10 <- lm(mpg ~ ., data = mtcars)
+fit10 <- lm(mpg ~ ., data = mtcars2)
 coef10 <- round(summary(fit10)$coef, 4)
 glance10 <- round(glance(fit10)[1:6], 4)
 
@@ -65,11 +66,11 @@ coef.best <- round(summary(bestfit)$coef, 4)
 glance.best <- round(glance(bestfit)[1:6], 4)
 
 ## Obtained by manually adding / removing variables (using correlations as guide)
-fit3 <- lm(mpg ~ am + wt + cyl, data = mtcars)
+fit3 <- lm(mpg ~ am + wt + cyl, data = mtcars2)
 coef3 <- round(summary(fit3)$coef, 4)
 glance3 <- round(glance(fit3)[1:6], 4)
 
-fit4 <- lm(mpg ~ am + wt + cyl + hp, data = mtcars)
+fit4 <- lm(mpg ~ am + wt + cyl + hp, data = mtcars2)
 coef4 <- round(summary(fit4)$coef, 4)
 glance4 <- round(glance(fit4)[1:6], 4)
 ```
