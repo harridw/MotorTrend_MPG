@@ -120,14 +120,14 @@ influence.fit4.id <- which(fit4.dfb > (2/(length(mtcars$mpg)^.5))) ##  dfbetas >
 rbind(influence.fit4.id, fit4.dfb[influence.fit4.id])   ## value relfects a car & fit4 variable combination
 ```
 
-```{r hatvalues_leverage, include = TRUE, echo = TRUE, results = "markup"}
+```{r hatvalues_leverage, include = FALSE, echo = FALSE, results = "hide"}
 fit4.hat <- hatvalues(fit4)
 leverage.fit4.id <- which(fit4.hat > (2*(4+1)/length(mtcars2$mpg))) ##  hatvalue > #2*(k+1)/n
 fit4.hat[leverage.fit4.id] 
 ```
 
 ### Statistical Inference
-To provide additional perspective on the strength of the model in predicting, a comparison of the actual MPG to the fitted mpg and associated 95% confidence interval (see Appendix: Figure 4) to look at how well the model estimated results.  While there are a few instances (see Appendix: Figure 5) where the actual MPG falls outside the 95% confidence interval, a vast majority fit the model.
+To provide additional perspective on the strength of the model in predicting, a comparison of the actual MPG to the fitted mpg and associated 95% confidence interval (see Appendix: Figure 4) to look at how well the model estimated results.  While there are a few instances (see Appendix: Figure 5) where the actual MPG falls outside the 95% confidence interval, a majority fit the model.
 
 
 ### Conclusion

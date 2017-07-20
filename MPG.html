@@ -211,16 +211,11 @@ fit4 &lt;- lm(mpg ~ am + wt + cyl + hp, data = mtcars2)</code></pre>
 ##                     cov.r   cook.d hat  
 ## Lincoln Continental  1.74_*  0.01   0.29
 ## Maserati Bora        2.10_*  0.08   0.47</code></pre>
-<pre class="r"><code>fit4.hat &lt;- hatvalues(fit4)
-leverage.fit4.id &lt;- which(fit4.hat &gt; (2*(4+1)/length(mtcars2$mpg))) ##  hatvalue &gt; #2*(k+1)/n
-fit4.hat[leverage.fit4.id] </code></pre>
-<pre><code>## Maserati Bora 
-##     0.4713671</code></pre>
 </div>
 </div>
 <div id="statistical-inference" class="section level3">
 <h3>Statistical Inference</h3>
-<p>To provide additional perspective on the strength of the model in predicting, a comparison of the actual MPG to the fitted mpg and associated 95% confidence interval (see Appendix: Figure 4) to look at how well the model estimated results. While there are a few instances (see Appendix: Figure 5) where the actual MPG falls outside the 95% confidence interval, a vast majority fit the model.</p>
+<p>To provide additional perspective on the strength of the model in predicting, a comparison of the actual MPG to the fitted mpg and associated 95% confidence interval (see Appendix: Figure 4) to look at how well the model estimated results. While there are a few instances (see Appendix: Figure 5) where the actual MPG falls outside the 95% confidence interval, a majority fit the model.</p>
 </div>
 <div id="conclusion" class="section level3">
 <h3>Conclusion</h3>
