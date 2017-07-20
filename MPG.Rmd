@@ -126,11 +126,12 @@ fit4.hat[leverage.fit4.id]
 ```
 
 ## Statistical Inference
-To provide additional perspective on the strength of the model in predicting, a comparison of the actual MPG to the fitted mpg and associated 95% confidence interval (see Appendix: Figure 4) to look at how well the model estimated results.  While there are a few instances (see Appendix: Figure 5) where the actual MPG falls outside the 95% confidence interval, a majority fit the model.
+To provide additional perspective on the strength of the model in predicting, a comparison of the actual MPG to the fitted mpg and associated 95% confidence interval to look at how well the model estimated results.  While there are a few instances (see Appendix: Figure 4) where the actual MPG falls outside the 95% confidence interval, a majority fit the model.
 
 
 ## Conclusion
 The regression model, fit4, provides the best fit, explaining 84% of the changes in MPG. Outline of coefficients:  
+
 1. Intercept [33.71] - estimate of MPG for an average wt & hp car with 4 cyl car and automatic transmission  
 2. am1 - MPG increases 1.81 mpg for switching to a manual transmission, all else equal  
 3. wt - reduces MPG by 2.5 for a 1 unit (1,000 lbs) change in the weight of a car, all else equal  
@@ -156,30 +157,23 @@ pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
 
 
 ### Figure 2: Correlation Factor Matrix
-```{r corr_matrix_grid, fig.keep = "high", fig.show = "asis", fig.height = 4, fig.path = 'figure/'}
+```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "markup"}
 mtcars.cor <- cor(mtcars)
-corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE, 
-                  order = "original", is.corr = TRUE)
 ```
 
+```{r corr_figure, include = FALSE, ehco = FALSE, fig.keep = "high", fig.show = "hide", fig.height = 4, fig.path = 'figure/'}
+corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE, 
+                   order = "original", is.corr = TRUE)
+```
 
 ### Figure 3: Regression Model Residuals
-```{r plot_residuals, include=FALSE, echo=FALSE, fig.keep="high", fig.show="asis", fig.path='figure/'}
-par(mfrow = c(2,2), mar = c(5,4,2,1))
+```{r plot_residuals, include=TRUE, echo=FALSE, fig.keep="high", fig.show="asis", fig.height = 4, fig.path='figure/'}
+par(mfrow = c(2,2))
 plot(fit4, which = 1:4)
 ```
 
 
-### Figure 4: Regression Model Confidence Interval
-```{r regression_confint, include = TRUE, echo = TRUE, results = "markup"}
-fit4.confint <- round(predict(fit4, mtcars2, interval = "confidence", level = 0.95), 2)
-actual <- mtcars2[,1]
-fit4.compare <- as.data.frame(cbind(actual, fit4.confint))
-fit4.compare
-```
-
-
-### Figure 5: Regression Model Observations outside Confidence Interval
+### Figure 4: Regression Model Observations outside Confidence Interval
 ```{r regression_outliers, include = TRUE, echo = TRUE, results = "markup"}
 fit4.confint <- round(predict(fit4, mtcars2, interval = "confidence", level = 0.95), 2)
 actual <- mtcars2[,1]

@@ -6,9 +6,14 @@ body, td {
 
 body {
   max-width: 800px;
-  margin: 0;
+  width: 100%;
+  margin-top: 0;
+  margin-right: 0.5em;
+  margin-bottom: 0;
+  margin-left: 0.5em;
   padding: 0;
   line-height: 16px;
+  border: none;
 }
 
 tt, code, pre {
@@ -50,16 +55,17 @@ pre {
   overflow-x: auto;
 }
 pre code {
-   display: block; padding: 0.5em;
+   display: block; 
+   padding: 0.5em;
 }
 
 code {
-  font-size: 92%;
-  border: 1px solid #ccc;
+  font-size: 90%;
+  border: none;
 }
 
 code[class] {
-  background-color: #F8F8F8;
+  background-color: white;
 }
 
 table, td, th {
@@ -69,6 +75,6 @@ table, td, th {
 blockquote {
    color:#666666;
    margin:0;
-   padding-left: 1em;
-   border-left: 0.5em #EEE solid;
+   padding: 0;
+   border: none;
 }
