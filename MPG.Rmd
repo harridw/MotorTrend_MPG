@@ -84,7 +84,7 @@ glance4 <- round(glance(fit4)[1:6], 4)
 Two comparisons performed to evaluate the best model.  The first is a comparison of the r.square and p-value for each model.  Then, we perform ANOVA to evaluate whether model is significantly better.
 
 ##### Exhbit 1: R.Square, Sigma, and P-value Comparisons
-```{r regression_compare, include = FALSE, echo = FALSE, results = "markup"}
+```{r regression_compare, include = TRUE, echo = FALSE, results = "markup"}
 model <- c("fit1", "fit3", "fit4", "bestfit", "fit10")
 model.compare <- rbind(glance1,glance3, glance4, glance.best, glance10)
 model.compare <- cbind(model, model.compare)
@@ -93,7 +93,7 @@ model.compare
 
 ##### Exhibit 2: ANOVA
 The findings provided below for Model 4 produce a p-value of 0.02693, which indicates that this model is significant.  These variables further contribute to the accuracy of the model.
-```{r model_compare_anova, include = FALSE, echo = FALSE, results = "markup"}
+```{r model_compare_anova, include = TRUE, echo = FALSE, results = "markup"}
 mpg.anova <- anova(fit1, fit3, fit4)
 mpg.anova
 ```

@@ -163,10 +163,27 @@ fit4 &lt;- lm(mpg ~ am + wt + cyl + hp, data = mtcars2)</code></pre>
 <p>Two comparisons performed to evaluate the best model. The first is a comparison of the r.square and p-value for each model. Then, we perform ANOVA to evaluate whether model is significantly better.</p>
 <div id="exhbit-1-r.square-sigma-and-p-value-comparisons" class="section level5">
 <h5>Exhbit 1: R.Square, Sigma, and P-value Comparisons</h5>
+<pre><code>##     model r.squared adj.r.squared  sigma statistic p.value df
+## 1    fit1    0.3598        0.3385 4.9020   16.8603   3e-04  2
+## 2    fit3    0.8375        0.8134 2.6032   34.7917   0e+00  5
+## 3    fit4    0.8659        0.8401 2.4101   33.5712   0e+00  6
+## 4 bestfit    0.8497        0.8336 2.4588   52.7496   0e+00  4
+## 5   fit10    0.8816        0.8165 2.5819   13.5381   0e+00 12</code></pre>
 </div>
 <div id="exhibit-2-anova" class="section level5">
 <h5>Exhibit 2: ANOVA</h5>
 <p>The findings provided below for Model 4 produce a p-value of 0.02693, which indicates that this model is significant. These variables further contribute to the accuracy of the model.</p>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: mpg ~ am
+## Model 2: mpg ~ am + wt + cyl
+## Model 3: mpg ~ am + wt + cyl + hp
+##   Res.Df    RSS Df Sum of Sq       F    Pr(&gt;F)    
+## 1     30 720.90                                   
+## 2     27 182.97  3    537.93 30.8692 1.008e-08 ***
+## 3     26 151.03  1     31.94  5.4991   0.02693 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
