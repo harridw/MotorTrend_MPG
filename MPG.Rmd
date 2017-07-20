@@ -2,7 +2,9 @@
 title: "Regression: MotorTrend MPG"
 author: "EHarris"
 date: "7/20/2017"
-output: html_document
+output: pdf_document
+fontsize: 10pt
+geometry: margin=0.75in
 ---
 
 ```{r setup, include = FALSE, echo = TRUE, results = "hide"}
@@ -16,7 +18,7 @@ ipak <- function(pkg){
 ### Package Usage
 packages <- c("plyr", "dplyr", "data.table", "dtplyr", "lubridate", "ggplot2", "scales",
                   "reshape2", "knitr", "R.cache", "stringr", "gtools", "quantreg",
-                  "graphics", "corrplot", "broom")
+                  "graphics", "corrplot", "broom", "rmarkdown")
 ipak(packages)
 ```
 
@@ -110,7 +112,7 @@ A panel plot of residuals (see Appendix: Figure 3).  Understanding residuals is 
 
 #### High Leverage/Influential Data Points
 We use the function influence.measures() to help identify points/observations that may need to be considered for its influence on coefficients.
-```{r influence.measures, include = TRUE, echo = FALSE, results = "markup"}
+```{r influence.measures, include = TRUE, echo = FALSE, results = "markup", cols.print = 10}
 summary(influence.measures(fit4))
 ```
 
