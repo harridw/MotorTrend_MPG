@@ -21,7 +21,7 @@ packages <- c("plyr", "dplyr", "data.table", "dtplyr", "lubridate", "ggplot2", "
 ipak(packages)
 ```
 
-### Executive Summary  
+## Executive Summary  
 We were asked by Motor Trend to help understand the relationship between a number of variables, predictors, and miles-per-gallon (MPG), outcome, Specifically, were are asked to answer the following two questions:
 
 * Is an automatic or manual transmission better for MPG?
@@ -29,7 +29,7 @@ We were asked by Motor Trend to help understand the relationship between a numbe
 
 Under a simple linear regression model, it would appear that a manual transmission adds more than 7 mpg over an automatic. Using additional variables to our regression model, we conclude that switching from an automatic to manual adds 1.8 mpg, all else equal. 
 
-### Data Processing  
+## Data Processing  
 Use data(mtcars) to load the R dataset into the current enviromnent.  
 ```{r load_mtcars, include = TRUE, echo = TRUE}
 data(mtcars)
@@ -39,7 +39,7 @@ mtcars2$cyl <- as.factor(mtcars2$cyl)
 ```
 
 
-### Exploratory Data Analysis  
+## Exploratory Data Analysis  
 To obtain a high-level insight to the relationship of the different variables in the data set, we created a panel plot and correlation matrix (see Appendix: Figure 1 & Figure 2) to understand the relationships.  We find that the variables cyl, disp, hp, and wt have the strongest relationship with mpg.  The variables drat, vs, and am are slightly less connected.  We use this information to help assess our regression analysis results.
 ```{r dataset_overview, include = FALSE, echo = FALSE, results = "hide"}
 str(mtcars)
@@ -47,12 +47,11 @@ head(mtcars)
 ```
 
 
-### Regression Analysis
+## Regression Analysis
 Here we look build and compare various regression models to identify a model that best fits data.  We use several metrics to evaluate our model fit, including: adjusted r-square, residual squared error (sigma), and p-values.  We also use ANOVA and an analysis of the residuals to evaluate the model.
 
-#### Regression Models
+### Regression Models
 Approached building mdoels through process of adding variables that contribute significantly to predicting MPG.
-
 ```{r regression_models, include = TRUE, echo = TRUE, results = "hide"}
 fit1 <- lm(mpg ~ am, data = mtcars2)
 fit10 <- lm(mpg ~ ., data = mtcars2)
@@ -81,10 +80,10 @@ glance4 <- round(glance(fit4)[1:6], 4)
 ```
 
 
-#### Comparison of Regression Models
-Two comparisons performed to evaluate the best model.  The first is a comparison of the r.square and p-value for each model.  Then, we perform ANOVA to evaluate whether model is significantly better.
+### Comparison of Regression Models
+Two comparisons performed to evaluate the best model.  The first is a comparison of the r.square and p-value for each model.  Then, we perform ANOVA test to evaluate whether model is significantly better.
 
-##### Exhbit 1: R.Square, Sigma, and P-value Comparisons
+#### Exhbit 1: R.Square, Sigma, and P-value Comparisons
 ```{r regression_compare, include = TRUE, echo = FALSE, results = "markup"}
 model <- c("fit1", "fit3", "fit4", "bestfit", "fit10")
 model.compare <- rbind(glance1,glance3, glance4, glance.best, glance10)
@@ -92,15 +91,14 @@ model.compare <- cbind(model, model.compare)
 model.compare
 ```
 
-##### Exhibit 2: ANOVA
-The findings provided below for Model 4 produce a p-value of 0.02693, which indicates that this model is significant.  These variables further contribute to the accuracy of the model.
+#### Exhibit 2: ANOVA
 ```{r model_compare_anova, include = TRUE, echo = FALSE, results = "markup"}
 mpg.anova <- anova(fit1, fit3, fit4)
 mpg.anova
 ```
 
 
-### Residuals & Diagnostics
+## Residuals & Diagnostics
 A panel plot of residuals (see Appendix: Figure 3).  Understanding residuals is critical to understanding how well the regression model fits the data, goodness of fit.  The different plots provide some insight to how closely the regression line fits the data.  Although a few "outlier" points noted, the results seem to validate model fit.
 
 1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. Want to see that the residuals are fairly well-distributed around the fitted line, and no particular pattern exists.  
@@ -109,7 +107,7 @@ A panel plot of residuals (see Appendix: Figure 3).  Understanding residuals is 
 4. Cooks distance: The purpose of this plot is identify may be considered outliers.  The "Cooks distance" is considerably different from others. These points may be influential against the regression line, changing intercept and/or slope.
 
 
-#### High Leverage/Influential Data Points
+### High Leverage/Influential Data Points
 We use the function influence.measures() to help identify points/observations that may need to be considered for its influence on coefficients.
 ```{r influence.measures, include = TRUE, echo = FALSE, results = "markup", cols.print = 10}
 summary(influence.measures(fit4))
@@ -127,11 +125,11 @@ leverage.fit4.id <- which(fit4.hat > (2*(4+1)/length(mtcars2$mpg))) ##  hatvalue
 fit4.hat[leverage.fit4.id] 
 ```
 
-### Statistical Inference
+## Statistical Inference
 To provide additional perspective on the strength of the model in predicting, a comparison of the actual MPG to the fitted mpg and associated 95% confidence interval (see Appendix: Figure 4) to look at how well the model estimated results.  While there are a few instances (see Appendix: Figure 5) where the actual MPG falls outside the 95% confidence interval, a majority fit the model.
 
 
-### Conclusion
+## Conclusion
 The regression model, fit4, provides the best fit, explaining 84% of the changes in MPG. Outline of coefficients:  
 1. Intercept [33.71] - estimate of MPG for an average wt & hp car with 4 cyl car and automatic transmission  
 2. am1 - MPG increases 1.81 mpg for switching to a manual transmission, all else equal  
@@ -140,7 +138,7 @@ The regression model, fit4, provides the best fit, explaining 84% of the changes
 5. cyl8 - a switch from a 4 cyl to 8 cyl decreases MPG by 2.16, all else equal (less than 6 cyl?)
 6. hp - a 1 unit change in hp reduces MPG by 0.03, all else equal
 
-#### Regression Coefficients
+### Regression Coefficients
 ```{r regression_coefficients, include = TRUE, echo = FALSE, results = "markup"}
 round(coef4[,1], 2)
 ```
@@ -148,16 +146,16 @@ round(coef4[,1], 2)
 Although there may more that can be learned about interaction between cyl (cyl8) and hp, this model produces a fairly reliable approach to predicting the MPG of a car.  With a larger population and/or more detailed look at values within a variable, it may be possible to create a better model.  This creates the risk of overfitting to reduce residuals, but not necessarily improving the applicability of the model.
 
 
-### Appendix
+## Appendix
 
-#### Figure 1 (Panel Plot): Illustrate the relationship of each variable
-This panel plot provides a quick, high-level, illustration of a variable within the dataset against each other variable in the dataset.  The pu
-```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
+### Figure 1 (Panel Plot): Illustrate the relationship of each variable
+A panel plot of the relationship of each variable to another within the 'mtcars' data set.
+```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.height = 4, fig.path = 'figure/'}
 pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
 ```
 
 
-#### Figure 2: Correlation Factor Matrix
+### Figure 2: Correlation Factor Matrix
 ```{r corr_matrix_grid, fig.keep = "high", fig.show = "asis", fig.height = 4, fig.path = 'figure/'}
 mtcars.cor <- cor(mtcars)
 corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE, 
@@ -165,14 +163,14 @@ corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE,
 ```
 
 
-#### Figure 3: Regression Model Residuals
+### Figure 3: Regression Model Residuals
 ```{r plot_residuals, include=FALSE, echo=FALSE, fig.keep="high", fig.show="asis", fig.path='figure/'}
 par(mfrow = c(2,2), mar = c(5,4,2,1))
 plot(fit4, which = 1:4)
 ```
 
 
-#### Figure 4: Regression Model Confidence Interval
+### Figure 4: Regression Model Confidence Interval
 ```{r regression_confint, include = TRUE, echo = TRUE, results = "markup"}
 fit4.confint <- round(predict(fit4, mtcars2, interval = "confidence", level = 0.95), 2)
 actual <- mtcars2[,1]
@@ -181,7 +179,7 @@ fit4.compare
 ```
 
 
-#### Figure 5: Regression Model Observations outside Confidence Interval
+### Figure 5: Regression Model Observations outside Confidence Interval
 ```{r regression_outliers, include = TRUE, echo = TRUE, results = "markup"}
 fit4.confint <- round(predict(fit4, mtcars2, interval = "confidence", level = 0.95), 2)
 actual <- mtcars2[,1]
