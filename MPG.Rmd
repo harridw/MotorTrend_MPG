@@ -110,7 +110,7 @@ A panel plot of residuals (see Appendix: Figure 3).  Understanding residuals is 
 
 #### High Leverage/Influential Data Points
 We use the function influence.measures() to help identify points/observations that may need to be considered for its influence on coefficients.
-```{r influence.measures, include = FALSE, echo = FALSE, results = "markup"}
+```{r influence.measures, include = TRUE, echo = FALSE, results = "markup"}
 summary(influence.measures(fit4))
 ```
 
@@ -140,7 +140,7 @@ The regression model, fit4, provides the best fit, explaining 84% of the changes
 6. hp - a 1 unit change in hp reduces MPG by 0.03, all else equal
 
 #### Regression Coefficients
-```{r regression_coefficients, include = FALSE, echo = FALSE, results = "markup"}
+```{r regression_coefficients, include = TRUE, echo = FALSE, results = "markup"}
 round(coef4[,1], 2)
 ```
 
@@ -148,6 +148,7 @@ Although there may more that can be learned about interaction between cyl (cyl8)
 
 
 ### Appendix
+
 #### Figure 1 (Panel Plot): Illustrate the relationship of each variable
 This panel plot provides a quick, high-level, illustration of a variable within the dataset against each other variable in the dataset.  The pu
 ```{r panel_plot_exploratory, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}

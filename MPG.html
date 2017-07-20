@@ -202,6 +202,15 @@ fit4 &lt;- lm(mpg ~ am + wt + cyl + hp, data = mtcars2)</code></pre>
 <div id="high-leverageinfluential-data-points" class="section level4">
 <h4>High Leverage/Influential Data Points</h4>
 <p>We use the function influence.measures() to help identify points/observations that may need to be considered for its influence on coefficients.</p>
+<pre><code>## Potentially influential observations of
+##   lm(formula = mpg ~ am + wt + cyl + hp, data = mtcars2) :
+## 
+##                     dfb.1_ dfb.am1 dfb.wt dfb.cyl6 dfb.cyl8 dfb.hp dffit
+## Lincoln Continental  0.16  -0.09   -0.19   0.06     0.04     0.04  -0.22
+## Maserati Bora       -0.18   0.04   -0.09  -0.14    -0.25     0.53   0.70
+##                     cov.r   cook.d hat  
+## Lincoln Continental  1.74_*  0.01   0.29
+## Maserati Bora        2.10_*  0.08   0.47</code></pre>
 <pre class="r"><code>fit4.hat &lt;- hatvalues(fit4)
 leverage.fit4.id &lt;- which(fit4.hat &gt; (2*(4+1)/length(mtcars2$mpg))) ##  hatvalue &gt; #2*(k+1)/n
 fit4.hat[leverage.fit4.id] </code></pre>
@@ -223,6 +232,8 @@ fit4.hat[leverage.fit4.id] </code></pre>
 5. cyl8 - a switch from a 4 cyl to 8 cyl decreases MPG by 2.16, all else equal (less than 6 cyl?) 6. hp - a 1 unit change in hp reduces MPG by 0.03, all else equal</p>
 <div id="regression-coefficients" class="section level4">
 <h4>Regression Coefficients</h4>
+<pre><code>## (Intercept)         am1          wt        cyl6        cyl8          hp 
+##       33.71        1.81       -2.50       -3.03       -2.16       -0.03</code></pre>
 <p>Although there may more that can be learned about interaction between cyl (cyl8) and hp, this model produces a fairly reliable approach to predicting the MPG of a car. With a larger population and/or more detailed look at values within a variable, it may be possible to create a better model. This creates the risk of overfitting to reduce residuals, but not necessarily improving the applicability of the model.</p>
 </div>
 </div>
