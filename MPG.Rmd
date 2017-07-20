@@ -2,9 +2,8 @@
 title: "Regression: MotorTrend MPG"
 author: "EHarris"
 date: "7/20/2017"
-output: pdf_document
-fontsize: 10pt
-geometry: margin=0.75in
+output: html_document
+css: custom.css
 ---
 
 ```{r setup, include = FALSE, echo = TRUE, results = "hide"}
@@ -159,8 +158,7 @@ pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
 
 
 #### Figure 2: Correlation Factor Matrix
-```{r corr_matrix_grid, fig.keep = "high", fig.show = "asis", fig.path = 'figure/'}
-par(mar = c(5,4,2,1))
+```{r corr_matrix_grid, fig.keep = "high", fig.show = "asis", fig.height = 4, fig.path = 'figure/'}
 mtcars.cor <- cor(mtcars)
 corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE, 
                   order = "original", is.corr = TRUE)
