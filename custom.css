@@ -6,9 +6,9 @@ body, td {
 
 body {
   max-width: 800px;
-  margin: auto;
-  padding: 1em;
-  line-height: 20px;
+  margin: 0;
+  padding: 0;
+  line-height: 16px;
 }
 
 tt, code, pre {
