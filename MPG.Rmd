@@ -27,7 +27,7 @@ We were asked by Motor Trend to help understand the relationship between a numbe
 * Is an automatic or manual transmission better for MPG?
 * Quantify the MPG difference between automatic and manual transmissions"  
 
-Under a simple linear regression model, it would appear that a manual transmission adds more than 7 mpg over an automatic. Using additional variables to our regression model, we conclude that switching from an automatic to manual adds 1.81 mpg, all else equal. 
+By performing regression analysis, we obtained a model indicating a 1.81 mpg increase with switching from an automatic to manual.  The analysis provided below supports this conclusion. 
 
 ## Data Processing  
 Use data(mtcars) to load the R dataset into the current enviromnent.  
@@ -102,10 +102,14 @@ mpg.anova
 ## Residuals & Diagnostics
 Understanding residuals is critical to understanding how well the regression model fits the data.  The different plots (see Appendix: Figure 3) provide some insight to how closely the regression line fits the data.  Although a few "outlier" points noted, the results seem to validate model fit.
 
-1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. Want to see that the residuals are fairly well-distributed around the fitted line, and no particular pattern exists.  
-2. Normal Q-Q: This plot shows if residuals are normally distributed. It’s good fit if residuals are lined closely the straight dashed line.  
-3. Scale-Location: Use to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are equally spread around a horizontal line along the entire range of predictors.  
-4. Cooks distance: The purpose of this plot is identify may be considered outliers.  The "Cooks distance" is considerably different from others. These points may be influential against the regression line, changing intercept and/or slope.
+## 1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. Want to see that the residuals are fairly 
+## well-distributed around the fitted line, and no particular pattern exists.  
+## 2. Normal Q-Q: This plot shows if residuals are normally distributed. It’s good fit if residuals are lined closely the straight
+## dashed line.  
+## 3. Scale-Location: Use to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are  
+## equally spread around a horizontal line along the entire range of predictors.  
+## 4. Cooks distance: The purpose of this plot is identify may be considered outliers.  The "Cooks distance" is considerably  
+## different from others. These points may be influential against the regression line, changing intercept and/or slope.
 
 
 ### High Leverage/Influential Data Points
