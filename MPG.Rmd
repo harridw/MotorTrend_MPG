@@ -1,7 +1,5 @@
 ---
-title: "Regression: MotorTrend MPG"
-author: "EHarris"
-date: "7/21/2017"
+title: "Regression: Evaluate effects of Transimission type on MPG"
 output: html_document
 css: custom.css
 ---
@@ -46,12 +44,17 @@ str(mtcars)
 head(mtcars)
 ```
 
+### Exhibit 1: Correlation Factor of Each Variable with MPG
+```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "markup"}
+mtcars.cor <- round(cor(mtcars), 3)
+mtcars.cor[1,]
+```
+
 
 ## Regression Analysis
-Here we look build and compare various regression models to identify a model that best fits data.  We use several metrics to evaluate our model fit, including: adjusted r-square, residual squared error (sigma), and p-values.  We also use ANOVA and an analysis of the residuals to evaluate the model.
+Here we look build and compare various regression models to identify a model that best fits data.  We use several metrics to evaluate our model fit, including: adjusted r-square, residual squared error (sigma), and p-values.  We also use ANOVA and an analysis of the residuals to evaluate the model. Regression 'fit4' determined to provide best fit.
 
 ### Regression Models
-Approached building mdoels by selecting variables likely contribute significantly to predicting MPG.
 ```{r regression_models, include = TRUE, echo = TRUE, results = "hide"}
 fit1 <- lm(mpg ~ am, data = mtcars2)
 fit10 <- lm(mpg ~ ., data = mtcars2)
@@ -83,7 +86,7 @@ glance4 <- round(glance(fit4)[1:6], 4)
 ### Comparison of Regression Models
 Two comparisons performed to evaluate the best model.  The first is a comparison of the r.square and p-value for each model.  Then, we perform ANOVA test to evaluate whether model is significantly better.
 
-#### Exhbit 1: R.Square, Sigma, and P-value Comparisons
+#### Exhbit 2: R.Square, Sigma, and P-value Comparisons
 ```{r regression_compare, include = TRUE, echo = FALSE, results = "markup"}
 model <- c("fit1", "fit3", "fit4", "bestfit", "fit10")
 model.compare <- rbind(glance1,glance3, glance4, glance.best, glance10)
@@ -92,7 +95,7 @@ model.compare
 ```
 
 
-#### Exhibit 2: ANOVA
+#### Exhibit 3: ANOVA
 ```{r model_compare_anova, include = TRUE, echo = FALSE, results = "markup"}
 mpg.anova <- anova(fit1, fit3, fit4)
 mpg.anova
@@ -102,14 +105,10 @@ mpg.anova
 ## Residuals & Diagnostics
 Understanding residuals is critical to understanding how well the regression model fits the data.  The different plots (see Appendix: Figure 3) provide some insight to how closely the regression line fits the data.  Although a few "outlier" points noted, the results seem to validate model fit.
 
-## 1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. Want to see that the residuals are fairly 
-## well-distributed around the fitted line, and no particular pattern exists.  
-## 2. Normal Q-Q: This plot shows if residuals are normally distributed. It’s good fit if residuals are lined closely the straight
-## dashed line.  
-## 3. Scale-Location: Use to check the assumption of equal variance (homoscedasticity).  Ideally, we would see points that are  
-## equally spread around a horizontal line along the entire range of predictors.  
-## 4. Cooks distance: The purpose of this plot is identify may be considered outliers.  The "Cooks distance" is considerably  
-## different from others. These points may be influential against the regression line, changing intercept and/or slope.
+1. Residuals vs Fitted: Want to see that the residuals are fairly well-distributed and no particular pattern exists.  
+2. Normal Q-Q: Ideally, residuals are lined closely with the straight dashed line.  
+3. Scale-Location(homoscedasticity): Ideally, points are equally spread around a line along the entire range of predictors.  
+4. Cooks distance: Visually illustrates those points that are outliers and may influence coefficients.
 
 
 ### High Leverage/Influential Data Points
@@ -159,26 +158,20 @@ A panel plot of the relationship of each variable to another within the 'mtcars'
 pairs(mtcars, panel = panel.smooth, main = "MT Cars Data", col = 3)
 ```
 
-
-### Figure 2: Correlation Factor Matrix
-```{r corr_matrix_grid, include = TRUE, echo = TRUE, results = "markup"}
-mtcars.cor <- round(cor(mtcars), 3)
-mtcars.cor
-```
-
-```{r corr_figure, include = FALSE, ehco = FALSE, fig.keep = "high", fig.show = "hide", fig.height = 4, fig.path = 'figure/'}
+```{r corr_figure, include = FALSE, ehco = FALSE, fig.keep = "high", fig.show = "hide", fig.height = 5, fig.path = 'figure/'}
 corrplot(mtcars.cor, method = "number", type = "upper", add = FALSE, 
                    order = "original", is.corr = TRUE)
 ```
 
-### Figure 3: Regression Model Residuals
-```{r plot_residuals, include=TRUE, echo=FALSE, fig.keep="high", fig.show="asis", fig.height = 4, fig.path='figure/'}
+
+### Figure 2: Regression Model Residuals
+```{r plot_residuals, include=TRUE, echo=FALSE, fig.keep="high", fig.show="asis", fig.height = 5, fig.path='figure/'}
 par(mfrow = c(2,2))
 plot(fit4, which = 1:4)
 ```
 
 
-### Figure 4: Regression Model Observations outside Confidence Interval
+### Figure 3: Regression Model Observations outside Confidence Interval
 ```{r regression_outliers, include = TRUE, echo = TRUE, results = "markup"}
 fit4.confint <- round(predict(fit4, mtcars2, interval = "confidence", level = 0.95), 2)
 actual <- mtcars2[,1]
