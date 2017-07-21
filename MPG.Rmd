@@ -1,8 +1,8 @@
 ---
 title: "Regression: MotorTrend MPG"
 author: "EHarris"
-date: "7/20/2017"
-output: html_document
+date: "7/21/2017"
+output: pdf_document
 css: custom.css
 ---
 
