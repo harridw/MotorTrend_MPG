@@ -2,7 +2,7 @@
 title: "Regression: MotorTrend MPG"
 author: "EHarris"
 date: "7/21/2017"
-output: pdf_document
+output: html_document
 css: custom.css
 ---
 
@@ -51,7 +51,7 @@ head(mtcars)
 Here we look build and compare various regression models to identify a model that best fits data.  We use several metrics to evaluate our model fit, including: adjusted r-square, residual squared error (sigma), and p-values.  We also use ANOVA and an analysis of the residuals to evaluate the model.
 
 ### Regression Models
-Approached building mdoels through process of adding variables that contribute significantly to predicting MPG.
+Approached building mdoels selecting variables that contribute significantly to predicting MPG.
 ```{r regression_models, include = TRUE, echo = TRUE, results = "hide"}
 fit1 <- lm(mpg ~ am, data = mtcars2)
 fit10 <- lm(mpg ~ ., data = mtcars2)
